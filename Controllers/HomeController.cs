@@ -20,7 +20,13 @@ namespace QuestStore.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            List<user> allUsers = new List<user>();
+            using (var _context = new QuestDBContext())
+            {
+                //user user = _context.user.FirstOrDefault();
+                allUsers = _context.Users.ToList();
+            }
+            return View(allUsers);
         }
 
         public IActionResult Privacy()
