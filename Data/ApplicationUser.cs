@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace QuestStore.Data
 {
-    public class AplicationUser : IdentityUser
+    public class ApplicationUser : IdentityUser
     {
         public string Nickname { get; set; }
 
-        public DateTime CarierStartedDate { get; set; }
+        public DateTime CarrierStartedDate { get; set; }
 
         public string Status { get; set; }
     }
