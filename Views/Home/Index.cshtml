@@ -1,13 +1,12 @@
-﻿@model List<user>
-
-@{
+﻿@{
     ViewData["Title"] = "Home Page";
 }
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-    @foreach(var sayMyName in Model)
+    <h2>@ViewData["accUser"]</h2>
+    @foreach(var sayMyName in (IEnumerable<user>) ViewData["allUsers"])
     {
             <h3>@sayMyName.userName</h3>
     }
