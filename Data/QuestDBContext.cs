@@ -9,7 +9,7 @@ namespace QuestStore.Data
 {
     public class QuestDBContext : DbContext
     {
-        public DbSet<user> Users { get; set; }
+        public DbSet<User> Users { get; set; }
 
         public QuestDBContext (DbContextOptions<QuestDBContext> options)
             : base(options)
