@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using QuestStore.Data;
 using QuestStore.Models;
 
 namespace QuestStore.Controllers
@@ -12,20 +13,20 @@ namespace QuestStore.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly QuestDBContext _context;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, QuestDBContext context)
         {
             _logger = logger;
+            _context = context;
         }
+
 
         public IActionResult Index()
         {
             List<user> allUsers = new List<user>();
-            using (var _context = new QuestDBContext())
-            {
-                //user user = _context.user.FirstOrDefault();
-                allUsers = _context.Users.ToList();
-            }
+            allUsers = _context.Users.ToList();
+
             return View(allUsers);
         }
 

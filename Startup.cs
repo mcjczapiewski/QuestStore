@@ -12,6 +12,7 @@ using QuestStore.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using QuestStore.Models;
 
 namespace QuestStore
 {
@@ -27,6 +28,7 @@ namespace QuestStore
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<QuestDBContext>(options => options.UseMySql(Configuration.GetConnectionString("QuestDBContext")));
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseMySql(
                     Configuration.GetConnectionString("DefaultConnection")));
