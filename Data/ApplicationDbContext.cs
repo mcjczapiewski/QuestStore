@@ -14,6 +14,6 @@ namespace QuestStore.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
-        }
+      }
     }
 }
