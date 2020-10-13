@@ -28,27 +28,6 @@ namespace QuestStore.Controllers
 
         public IActionResult Index()
         {
-            // TODO: name and password from registration
-            string loggingUserName = "User7";
-            string loggingUserPwd = "password;7";
-
-            // save new user to DB
-            LoginCredentials newCredentials = new LoginCredentials();
-            newCredentials.UserName = loggingUserName;
-            (newCredentials.PasswordSalt, newCredentials.PasswordHash) = Password.HashPassword(loggingUserPwd);
-            _credentials.UserCredentials.Add(newCredentials);
-            _credentials.SaveChanges();
-
-            // password compare
-            var userFromDb = _credentials.UserCredentials
-                .FirstOrDefault(x => x.UserName == loggingUserName);
-            bool validForLogin = Password.IfPasswordsMatch(userFromDb, loggingUserPwd);
-
-            ViewData["valid"] = validForLogin;
-            ViewData["allUsers"] = _context.Users.ToList();
-            ViewData["accUser"] = _credentials.UserCredentials
-                .OrderBy(q => q.Id)
-                .FirstOrDefault()?.UserName;
             return View();
         }
 
