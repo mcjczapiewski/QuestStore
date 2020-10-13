@@ -29,8 +29,8 @@ namespace QuestStore.Controllers
         public IActionResult Index()
         {
             // TODO: name and password from registration
-            string loggingUserName = "User5";
-            string loggingUserPwd = "password;5";
+            string loggingUserName = "User7";
+            string loggingUserPwd = "password;7";
 
             // save new user to DB
             LoginCredentials newCredentials = new LoginCredentials();
