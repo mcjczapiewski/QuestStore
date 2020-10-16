@@ -9,90 +9,90 @@ using QuestStore.Models;
 
 namespace QuestStore.Controllers
 {
-    public class UsersController : Controller
+    public class WalletsController : Controller
     {
         private readonly horizonp_ccqueststoreContext _context;
 
-        public UsersController(horizonp_ccqueststoreContext context)
+        public WalletsController(horizonp_ccqueststoreContext context)
         {
             _context = context;
         }
 
-        // GET: Users
+        // GET: Wallets
         public async Task<IActionResult> Index()
         {
-            var horizonp_ccqueststoreContext = _context.Users.Include(u => u.Group);
+            var horizonp_ccqueststoreContext = _context.Wallet.Include(w => w.User);
             return View(await horizonp_ccqueststoreContext.ToListAsync());
         }
 
-        // GET: Users/Details/5
-        public async Task<IActionResult> Details(int id)
+        // GET: Wallets/Details/5
+        public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var users = await _context.Users
-                .Include(u => u.Group)
-                .FirstOrDefaultAsync(m => m.UserId == id);
-            if (users == null)
+            var wallet = await _context.Wallet
+                .Include(w => w.User)
+                .FirstOrDefaultAsync(m => m.WalletId == id);
+            if (wallet == null)
             {
                 return NotFound();
             }
 
-            return View(users);
+            return View(wallet);
         }
 
-        // GET: Users/Create
+        // GET: Wallets/Create
         public IActionResult Create()
         {
-            ViewData["GroupId"] = new SelectList(_context.Groups, "GroupId", "Name");
+            ViewData["UserId"] = new SelectList(_context.Users, "UserId", "Email");
             return View();
         }
 
-        // POST: Users/Create
+        // POST: Wallets/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("UserId,Login,Email,Gender,Age,Mentor,GroupId,CredentialsId")] Users users)
+        public async Task<IActionResult> Create([Bind("WalletId,UserId,Balance")] Wallet wallet)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(users);
+                _context.Add(wallet);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GroupId"] = new SelectList(_context.Groups, "GroupId", "Name", users.GroupId);
-            return View(users);
+            ViewData["UserId"] = new SelectList(_context.Users, "UserId", "Email", wallet.UserId);
+            return View(wallet);
         }
 
-        // GET: Users/Edit/5
-        public async Task<IActionResult> Edit(int id)
+        // GET: Wallets/Edit/5
+        public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var users = await _context.Users.FindAsync(id);
-            if (users == null)
+            var wallet = await _context.Wallet.FindAsync(id);
+            if (wallet == null)
             {
                 return NotFound();
             }
-            ViewData["GroupId"] = new SelectList(_context.Groups, "GroupId", "Name", users.GroupId);
-            return View(users);
+            ViewData["UserId"] = new SelectList(_context.Users, "UserId", "Email", wallet.UserId);
+            return View(wallet);
         }
 
-        // POST: Users/Edit/5
+        // POST: Wallets/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("UserId,Login,Email,Gender,Age,Mentor,GroupId,CredentialsId")] Users users)
+        public async Task<IActionResult> Edit(int id, [Bind("WalletId,UserId,Balance")] Wallet wallet)
         {
-            if (id != users.UserId)
+            if (id != wallet.WalletId)
             {
                 return NotFound();
             }
@@ -101,12 +101,12 @@ namespace QuestStore.Controllers
             {
                 try
                 {
-                    _context.Update(users);
+                    _context.Update(wallet);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!UsersExists(users.UserId))
+                    if (!WalletExists(wallet.WalletId))
                     {
                         return NotFound();
                     }
@@ -117,43 +117,43 @@ namespace QuestStore.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GroupId"] = new SelectList(_context.Groups, "GroupId", "Name", users.GroupId);
-            return View(users);
+            ViewData["UserId"] = new SelectList(_context.Users, "UserId", "Email", wallet.UserId);
+            return View(wallet);
         }
 
-        // GET: Users/Delete/5
-        public async Task<IActionResult> Delete(int id)
+        // GET: Wallets/Delete/5
+        public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var users = await _context.Users
-                .Include(u => u.Group)
-                .FirstOrDefaultAsync(m => m.UserId == id);
-            if (users == null)
+            var wallet = await _context.Wallet
+                .Include(w => w.User)
+                .FirstOrDefaultAsync(m => m.WalletId == id);
+            if (wallet == null)
             {
                 return NotFound();
             }
 
-            return View(users);
+            return View(wallet);
         }
 
-        // POST: Users/Delete/5
+        // POST: Wallets/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var users = await _context.Users.FindAsync(id);
-            _context.Users.Remove(users);
+            var wallet = await _context.Wallet.FindAsync(id);
+            _context.Wallet.Remove(wallet);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool UsersExists(int id)
+        private bool WalletExists(int id)
         {
-            return _context.Users.Any(e => e.UserId == id);
+            return _context.Wallet.Any(e => e.WalletId == id);
         }
     }
 }
