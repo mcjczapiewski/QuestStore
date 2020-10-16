@@ -5,16 +5,15 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using QuestStore.Data;
 using QuestStore.Models;
 
 namespace QuestStore.Controllers
 {
     public class UsersController : Controller
     {
-        private readonly QuestDBContext _context;
+        private readonly horizonp_ccqueststoreContext _context;
 
-        public UsersController(QuestDBContext context)
+        public UsersController(horizonp_ccqueststoreContext context)
         {
             _context = context;
         }
@@ -22,7 +21,8 @@ namespace QuestStore.Controllers
         // GET: Users
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Users.ToListAsync());
+            var horizonp_ccqueststoreContext = _context.Users.Include(u => u.Group);
+            return View(await horizonp_ccqueststoreContext.ToListAsync());
         }
 
         // GET: Users/Details/5
@@ -33,19 +33,21 @@ namespace QuestStore.Controllers
                 return NotFound();
             }
 
-            var user = await _context.Users
-                .FirstOrDefaultAsync(m => m.userId == id);
-            if (user == null)
+            var users = await _context.Users
+                .Include(u => u.Group)
+                .FirstOrDefaultAsync(m => m.UserId == id);
+            if (users == null)
             {
                 return NotFound();
             }
 
-            return View(user);
+            return View(users);
         }
 
         // GET: Users/Create
         public IActionResult Create()
         {
+            ViewData["GroupId"] = new SelectList(_context.Groups, "GroupId", "Name");
             return View();
         }
 
@@ -54,15 +56,16 @@ namespace QuestStore.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("userId,userName")] User user)
+        public async Task<IActionResult> Create([Bind("UserId,Login,Email,Gender,Age,Mentor,GroupId,CredentialsId")] Users users)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(user);
+                _context.Add(users);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(user);
+            ViewData["GroupId"] = new SelectList(_context.Groups, "GroupId", "Name", users.GroupId);
+            return View(users);
         }
 
         // GET: Users/Edit/5
@@ -73,12 +76,13 @@ namespace QuestStore.Controllers
                 return NotFound();
             }
 
-            var user = await _context.Users.FindAsync(id);
-            if (user == null)
+            var users = await _context.Users.FindAsync(id);
+            if (users == null)
             {
                 return NotFound();
             }
-            return View(user);
+            ViewData["GroupId"] = new SelectList(_context.Groups, "GroupId", "Name", users.GroupId);
+            return View(users);
         }
 
         // POST: Users/Edit/5
@@ -86,9 +90,9 @@ namespace QuestStore.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("userId,userName")] User user)
+        public async Task<IActionResult> Edit(int id, [Bind("UserId,Login,Email,Gender,Age,Mentor,GroupId,CredentialsId")] Users users)
         {
-            if (id != user.userId)
+            if (id != users.UserId)
             {
                 return NotFound();
             }
@@ -97,12 +101,12 @@ namespace QuestStore.Controllers
             {
                 try
                 {
-                    _context.Update(user);
+                    _context.Update(users);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!UserExists(user.userId))
+                    if (!UsersExists(users.UserId))
                     {
                         return NotFound();
                     }
@@ -113,7 +117,8 @@ namespace QuestStore.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(user);
+            ViewData["GroupId"] = new SelectList(_context.Groups, "GroupId", "Name", users.GroupId);
+            return View(users);
         }
 
         // GET: Users/Delete/5
@@ -124,14 +129,15 @@ namespace QuestStore.Controllers
                 return NotFound();
             }
 
-            var user = await _context.Users
-                .FirstOrDefaultAsync(m => m.userId == id);
-            if (user == null)
+            var users = await _context.Users
+                .Include(u => u.Group)
+                .FirstOrDefaultAsync(m => m.UserId == id);
+            if (users == null)
             {
                 return NotFound();
             }
 
-            return View(user);
+            return View(users);
         }
 
         // POST: Users/Delete/5
@@ -139,15 +145,15 @@ namespace QuestStore.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var user = await _context.Users.FindAsync(id);
-            _context.Users.Remove(user);
+            var users = await _context.Users.FindAsync(id);
+            _context.Users.Remove(users);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool UserExists(int id)
+        private bool UsersExists(int id)
         {
-            return _context.Users.Any(e => e.userId == id);
+            return _context.Users.Any(e => e.UserId == id);
         }
     }
 }

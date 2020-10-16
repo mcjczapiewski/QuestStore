@@ -15,10 +15,10 @@ namespace QuestStore.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly QuestDBContext _context;
+        private readonly horizonp_ccqueststoreContext _context;
         private readonly ApplicationDbContext _credentials;
 
-        public HomeController(ILogger<HomeController> logger, QuestDBContext context, ApplicationDbContext credentials)
+        public HomeController(ILogger<HomeController> logger, horizonp_ccqueststoreContext context, ApplicationDbContext credentials)
         {
             _logger = logger;
             _context = context;

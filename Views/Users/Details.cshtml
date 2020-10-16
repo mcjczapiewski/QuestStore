@@ -1,4 +1,4 @@
-﻿@model QuestStore.Models.User
+﻿@model QuestStore.Models.Users
 
 @{
     ViewData["Title"] = "Details";
@@ -7,18 +7,54 @@
 <h1>Details</h1>
 
 <div>
-    <h4>User</h4>
+    <h4>Users</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.userName)
+            @Html.DisplayNameFor(model => model.Login)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.userName)
+            @Html.DisplayFor(model => model.Login)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Gender)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Gender)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Age)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Age)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Mentor)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Mentor)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.CredentialsId)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.CredentialsId)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Group)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Group.Name)
         </dd>
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.userId">Edit</a> |
+    <a asp-action="Edit" asp-route-id="@Model.UserId">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>
