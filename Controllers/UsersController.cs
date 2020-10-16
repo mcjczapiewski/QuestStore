@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +10,7 @@ using QuestStore.Models;
 
 namespace QuestStore.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class UsersController : Controller
     {
         private readonly horizonp_ccqueststoreContext _context;
@@ -56,7 +58,7 @@ namespace QuestStore.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("UserId,Login,Email,Gender,Age,Mentor,GroupId,CredentialsId")] Users users)
+        public async Task<IActionResult> Create([Bind("UserId,Login,Email,Gender,Age,Mentor,GroupId")] Users users)
         {
             if (ModelState.IsValid)
             {
@@ -90,7 +92,7 @@ namespace QuestStore.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("UserId,Login,Email,Gender,Age,Mentor,GroupId,CredentialsId")] Users users)
+        public async Task<IActionResult> Edit(int id, [Bind("UserId,Login,Email,Gender,Age,Mentor,GroupId")] Users users)
         {
             if (id != users.UserId)
             {
