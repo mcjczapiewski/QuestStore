@@ -9,23 +9,22 @@ using QuestStore.Models;
 
 namespace QuestStore.Controllers
 {
-    public class UsersController : Controller
+    public class GroupsController : Controller
     {
         private readonly horizonp_ccqueststoreContext _context;
 
-        public UsersController(horizonp_ccqueststoreContext context)
+        public GroupsController(horizonp_ccqueststoreContext context)
         {
             _context = context;
         }
 
-        // GET: Users
+        // GET: Groups
         public async Task<IActionResult> Index()
         {
-            var horizonp_ccqueststoreContext = _context.Users.Include(u => u.Group);
-            return View(await horizonp_ccqueststoreContext.ToListAsync());
+            return View(await _context.Groups.ToListAsync());
         }
 
-        // GET: Users/Details/5
+        // GET: Groups/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,42 +32,39 @@ namespace QuestStore.Controllers
                 return NotFound();
             }
 
-            var users = await _context.Users
-                .Include(u => u.Group)
-                .FirstOrDefaultAsync(m => m.UserId == id);
-            if (users == null)
+            var groups = await _context.Groups
+                .FirstOrDefaultAsync(m => m.GroupId == id);
+            if (groups == null)
             {
                 return NotFound();
             }
 
-            return View(users);
+            return View(groups);
         }
 
-        // GET: Users/Create
+        // GET: Groups/Create
         public IActionResult Create()
         {
-            ViewData["GroupId"] = new SelectList(_context.Groups, "GroupId", "Name");
             return View();
         }
 
-        // POST: Users/Create
+        // POST: Groups/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("UserId,Login,Email,Gender,Age,Mentor,GroupId,CredentialsId")] Users users)
+        public async Task<IActionResult> Create([Bind("GroupId,Name,NumberOfPpl")] Groups groups)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(users);
+                _context.Add(groups);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GroupId"] = new SelectList(_context.Groups, "GroupId", "Name", users.GroupId);
-            return View(users);
+            return View(groups);
         }
 
-        // GET: Users/Edit/5
+        // GET: Groups/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -76,23 +72,22 @@ namespace QuestStore.Controllers
                 return NotFound();
             }
 
-            var users = await _context.Users.FindAsync(id);
-            if (users == null)
+            var groups = await _context.Groups.FindAsync(id);
+            if (groups == null)
             {
                 return NotFound();
             }
-            ViewData["GroupId"] = new SelectList(_context.Groups, "GroupId", "Name", users.GroupId);
-            return View(users);
+            return View(groups);
         }
 
-        // POST: Users/Edit/5
+        // POST: Groups/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("UserId,Login,Email,Gender,Age,Mentor,GroupId,CredentialsId")] Users users)
+        public async Task<IActionResult> Edit(int id, [Bind("GroupId,Name,NumberOfPpl")] Groups groups)
         {
-            if (id != users.UserId)
+            if (id != groups.GroupId)
             {
                 return NotFound();
             }
@@ -101,12 +96,12 @@ namespace QuestStore.Controllers
             {
                 try
                 {
-                    _context.Update(users);
+                    _context.Update(groups);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!UsersExists(users.UserId))
+                    if (!GroupsExists(groups.GroupId))
                     {
                         return NotFound();
                     }
@@ -117,11 +112,10 @@ namespace QuestStore.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GroupId"] = new SelectList(_context.Groups, "GroupId", "Name", users.GroupId);
-            return View(users);
+            return View(groups);
         }
 
-        // GET: Users/Delete/5
+        // GET: Groups/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -129,31 +123,30 @@ namespace QuestStore.Controllers
                 return NotFound();
             }
 
-            var users = await _context.Users
-                .Include(u => u.Group)
-                .FirstOrDefaultAsync(m => m.UserId == id);
-            if (users == null)
+            var groups = await _context.Groups
+                .FirstOrDefaultAsync(m => m.GroupId == id);
+            if (groups == null)
             {
                 return NotFound();
             }
 
-            return View(users);
+            return View(groups);
         }
 
-        // POST: Users/Delete/5
+        // POST: Groups/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var users = await _context.Users.FindAsync(id);
-            _context.Users.Remove(users);
+            var groups = await _context.Groups.FindAsync(id);
+            _context.Groups.Remove(groups);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool UsersExists(int id)
+        private bool GroupsExists(int id)
         {
-            return _context.Users.Any(e => e.UserId == id);
+            return _context.Groups.Any(e => e.GroupId == id);
         }
     }
 }
