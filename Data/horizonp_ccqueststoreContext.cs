@@ -258,7 +258,7 @@ namespace QuestStore.Models
 
                 entity.Property(e => e.Age).HasColumnType("int(3)");
 
-                entity.Property(e => e.CredentialsId).HasColumnType("int(8)");
+                entity.Property(e => e.CredentialsId).HasColumnType("varchar(255)");
 
                 entity.Property(e => e.Email)
                     .IsRequired()

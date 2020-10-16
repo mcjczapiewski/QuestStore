@@ -19,7 +19,7 @@ namespace QuestStore.Models
         public int Age { get; set; }
         public string Mentor { get; set; }
         public int? GroupId { get; set; }
-        public int CredentialsId { get; set; }
+        public string CredentialsId { get; set; }
 
         public virtual Groups Group { get; set; }
         public virtual Wallet Wallet { get; set; }
