@@ -8,7 +8,6 @@ namespace QuestStore.Models
         public int InventoryId { get; set; }
         public int UserId { get; set; }
         public int ItemId { get; set; }
-        public string Available { get; set; }
 
         public virtual Items Item { get; set; }
         public virtual Users User { get; set; }

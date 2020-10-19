@@ -209,12 +209,6 @@ namespace QuestStore.Models
 
                 entity.Property(e => e.InventoryId).HasColumnType("int(11)");
 
-                entity.Property(e => e.Available)
-                    .IsRequired()
-                    .HasColumnType("enum('Y','N')")
-                    .HasCharSet("latin1")
-                    .HasCollation("latin1_swedish_ci");
-
                 entity.Property(e => e.ItemId).HasColumnType("int(11)");
 
                 entity.Property(e => e.UserId).HasColumnType("int(11)");
