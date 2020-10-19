@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace QuestStore.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : ApplicationBaseController
     {
         private readonly ILogger<HomeController> _logger;
         private readonly horizonp_ccqueststoreContext _context;

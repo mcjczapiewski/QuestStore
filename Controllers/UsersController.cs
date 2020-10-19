@@ -11,7 +11,7 @@ using QuestStore.Models;
 namespace QuestStore.Controllers
 {
     [Authorize(Roles = "Admin")]
-    public class UsersController : Controller
+    public class UsersController : ApplicationBaseController
     {
         private readonly horizonp_ccqueststoreContext _context;
 

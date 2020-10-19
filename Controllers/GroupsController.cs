@@ -9,7 +9,7 @@ using QuestStore.Models;
 
 namespace QuestStore.Controllers
 {
-    public class GroupsController : Controller
+    public class GroupsController : ApplicationBaseController
     {
         private readonly horizonp_ccqueststoreContext _context;
 
