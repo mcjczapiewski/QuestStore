@@ -7,6 +7,9 @@
     @if (SignInManager.IsSignedIn(User) && ViewData.ContainsKey("UserLogin"))
     {
         <li class="nav-item">
+            <div class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Coins:  </div>
+        </li>
+        <li class="nav-item">
             <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @ViewData["UserLogin"]!</a>
         </li>
         <li class="nav-item">

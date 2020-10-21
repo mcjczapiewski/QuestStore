@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using QuestStore.Data;
+using QuestStore.Models;
 
 namespace QuestStore.Areas.Identity.Pages.Account.Manage
 {
@@ -14,6 +15,7 @@ namespace QuestStore.Areas.Identity.Pages.Account.Manage
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
+        
 
         public IndexModel(
             UserManager<IdentityUser> userManager,
@@ -21,6 +23,7 @@ namespace QuestStore.Areas.Identity.Pages.Account.Manage
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            
         }
 
         public string Username { get; set; }
@@ -36,18 +39,26 @@ namespace QuestStore.Areas.Identity.Pages.Account.Manage
             [Phone]
             [Display(Name = "Phone number")]
             public string PhoneNumber { get; set; }
+
+            public Users LoggedUser { get; set; }
         }
 
         private async Task LoadAsync(IdentityUser user)
         {
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
+            //// TODO 
+            var context = new horizonp_ccqueststoreContext();
+            Users loggedUser = context.Users.FirstOrDefault(u => u.CredentialsId == user.Id);
 
             Username = userName;
 
             Input = new InputModel
             {
-                PhoneNumber = phoneNumber
+                PhoneNumber = phoneNumber,
+                LoggedUser = loggedUser
+
+                
             };
         }
 
