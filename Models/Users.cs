@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace QuestStore.Models
 {
@@ -15,9 +16,13 @@ namespace QuestStore.Models
         public int UserId { get; set; }
         public string Login { get; set; }
         public string Email { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public string Gender { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public int Age { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public string Mentor { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public int? GroupId { get; set; }
         public string CredentialsId { get; set; }
 
