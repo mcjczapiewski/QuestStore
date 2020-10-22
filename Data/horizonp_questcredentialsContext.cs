@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.Extensions.Configuration;
 
 namespace QuestStore.Models
 {
@@ -35,12 +36,14 @@ namespace QuestStore.Models
         public virtual DbSet<UsersTech> UsersTech { get; set; }
         public virtual DbSet<Wallet> Wallet { get; set; }
 
+        private readonly IConfiguration _configuration;
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseMySql("server=91.192.164.15;uid=horizonp_grants;pwd=12345;database=horizonp_quest-credentials", x => x.ServerVersion("10.3.17-mariadb"));
+                optionsBuilder.UseMySql(_configuration.GetConnectionString("OverrideConnection"), x => x.ServerVersion("10.3.17-mariadb"));
             }
         }
 
