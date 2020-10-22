@@ -48,7 +48,7 @@ namespace QuestStore.Areas.Identity.Pages.Account.Manage
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
             //// TODO 
-            var context = new horizonp_ccqueststoreContext();
+            var context = new horizonp_questcredentialsContext();
             Users loggedUser = context.Users.FirstOrDefault(u => u.CredentialsId == user.Id);
 
             Username = userName;

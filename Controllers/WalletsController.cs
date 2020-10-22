@@ -11,9 +11,9 @@ namespace QuestStore.Controllers
 {
     public class WalletsController : ApplicationBaseController
     {
-        private readonly horizonp_ccqueststoreContext _context;
+        private readonly horizonp_questcredentialsContext _context;
 
-        public WalletsController(horizonp_ccqueststoreContext context)
+        public WalletsController(horizonp_questcredentialsContext context)
         {
             _context = context;
         }
@@ -21,8 +21,8 @@ namespace QuestStore.Controllers
         // GET: Wallets
         public async Task<IActionResult> Index()
         {
-            var horizonp_ccqueststoreContext = _context.Wallet.Include(w => w.User);
-            return View(await horizonp_ccqueststoreContext.ToListAsync());
+            var horizonp_questcredentialsContext = _context.Wallet.Include(w => w.User);
+            return View(await horizonp_questcredentialsContext.ToListAsync());
         }
 
         // GET: Wallets/Details/5

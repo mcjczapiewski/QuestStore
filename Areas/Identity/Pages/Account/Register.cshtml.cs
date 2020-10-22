@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
@@ -95,15 +96,6 @@ namespace QuestStore.Areas.Identity.Pages.Account
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
-                        await using (var context = new horizonp_ccqueststoreContext())
-                        {
-                            var userDb = new Users
-                            {
-                                Email = user.Email, Login = user.Email.Split("@")[0], CredentialsId = user.Id
-                            };
-                            await context.Users.AddAsync(userDb);
-                            await context.SaveChangesAsync();
-                        }
                         return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
                     }
                     else

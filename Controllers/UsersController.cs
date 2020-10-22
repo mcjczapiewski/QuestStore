@@ -13,9 +13,9 @@ namespace QuestStore.Controllers
     [Authorize(Roles = "Admin")]
     public class UsersController : ApplicationBaseController
     {
-        private readonly horizonp_ccqueststoreContext _context;
+        private readonly horizonp_questcredentialsContext _context;
 
-        public UsersController(horizonp_ccqueststoreContext context)
+        public UsersController(horizonp_questcredentialsContext context)
         {
             _context = context;
         }
@@ -23,8 +23,8 @@ namespace QuestStore.Controllers
         // GET: Users
         public async Task<IActionResult> Index()
         {
-            var horizonp_ccqueststoreContext = _context.Users.Include(u => u.Group);
-            return View(await horizonp_ccqueststoreContext.ToListAsync());
+            var horizonp_questcredentialsContext = _context.Users.Include(u => u.Group);
+            return View(await horizonp_questcredentialsContext.ToListAsync());
         }
 
         // GET: Users/Details/5

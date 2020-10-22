@@ -14,8 +14,6 @@ namespace QuestStore.Models
         }
 
         public int UserId { get; set; }
-        public string Login { get; set; }
-        public string Email { get; set; }
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string Gender { get; set; }
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -23,9 +21,10 @@ namespace QuestStore.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string Mentor { get; set; }
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int? GroupId { get; set; }
+        public int GroupId { get; set; }
         public string CredentialsId { get; set; }
 
+        public virtual AspNetUsers Credentials { get; set; }
         public virtual Groups Group { get; set; }
         public virtual Wallet Wallet { get; set; }
         public virtual ICollection<UserInventory> UserInventory { get; set; }

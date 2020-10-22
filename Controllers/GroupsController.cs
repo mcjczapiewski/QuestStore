@@ -11,9 +11,9 @@ namespace QuestStore.Controllers
 {
     public class GroupsController : ApplicationBaseController
     {
-        private readonly horizonp_ccqueststoreContext _context;
+        private readonly horizonp_questcredentialsContext _context;
 
-        public GroupsController(horizonp_ccqueststoreContext context)
+        public GroupsController(horizonp_questcredentialsContext context)
         {
             _context = context;
         }

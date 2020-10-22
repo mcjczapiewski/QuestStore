@@ -4,17 +4,25 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace QuestStore.Models
 {
-    public partial class horizonp_ccqueststoreContext : DbContext
+    public partial class horizonp_questcredentialsContext : DbContext
     {
-        public horizonp_ccqueststoreContext()
+        public horizonp_questcredentialsContext()
         {
         }
 
-        public horizonp_ccqueststoreContext(DbContextOptions<horizonp_ccqueststoreContext> options)
+        public horizonp_questcredentialsContext(DbContextOptions<horizonp_questcredentialsContext> options)
             : base(options)
         {
         }
 
+        public virtual DbSet<AspNetRoleClaims> AspNetRoleClaims { get; set; }
+        public virtual DbSet<AspNetRoles> AspNetRoles { get; set; }
+        public virtual DbSet<AspNetUserClaims> AspNetUserClaims { get; set; }
+        public virtual DbSet<AspNetUserLogins> AspNetUserLogins { get; set; }
+        public virtual DbSet<AspNetUserRoles> AspNetUserRoles { get; set; }
+        public virtual DbSet<AspNetUserTokens> AspNetUserTokens { get; set; }
+        public virtual DbSet<AspNetUsers> AspNetUsers { get; set; }
+        public virtual DbSet<EfmigrationsHistory> EfmigrationsHistory { get; set; }
         public virtual DbSet<Groups> Groups { get; set; }
         public virtual DbSet<GroupsQuests> GroupsQuests { get; set; }
         public virtual DbSet<Items> Items { get; set; }
@@ -32,12 +40,261 @@ namespace QuestStore.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseMySql("server=91.192.164.15;uid=horizonp_grant;pwd=12345;database=horizonp_cc-queststore", x => x.ServerVersion("10.3.17-mariadb"));
+                optionsBuilder.UseMySql("server=91.192.164.15;uid=horizonp_grants;pwd=12345;database=horizonp_quest-credentials", x => x.ServerVersion("10.3.17-mariadb"));
             }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<AspNetRoleClaims>(entity =>
+            {
+                entity.HasIndex(e => e.RoleId);
+
+                entity.Property(e => e.Id).HasColumnType("int(11)");
+
+                entity.Property(e => e.ClaimType)
+                    .HasColumnType("longtext")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_general_ci");
+
+                entity.Property(e => e.ClaimValue)
+                    .HasColumnType("longtext")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_general_ci");
+
+                entity.Property(e => e.RoleId)
+                    .IsRequired()
+                    .HasColumnType("varchar(255)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_general_ci");
+
+                entity.HasOne(d => d.Role)
+                    .WithMany(p => p.AspNetRoleClaims)
+                    .HasForeignKey(d => d.RoleId);
+            });
+
+            modelBuilder.Entity<AspNetRoles>(entity =>
+            {
+                entity.HasIndex(e => e.NormalizedName)
+                    .HasName("RoleNameIndex")
+                    .IsUnique();
+
+                entity.Property(e => e.Id)
+                    .HasColumnType("varchar(255)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_general_ci");
+
+                entity.Property(e => e.ConcurrencyStamp)
+                    .HasColumnType("longtext")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_general_ci");
+
+                entity.Property(e => e.Name)
+                    .HasColumnType("varchar(256)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_general_ci");
+
+                entity.Property(e => e.NormalizedName)
+                    .HasColumnType("varchar(256)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_general_ci");
+            });
+
+            modelBuilder.Entity<AspNetUserClaims>(entity =>
+            {
+                entity.HasIndex(e => e.UserId);
+
+                entity.Property(e => e.Id).HasColumnType("int(11)");
+
+                entity.Property(e => e.ClaimType)
+                    .HasColumnType("longtext")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_general_ci");
+
+                entity.Property(e => e.ClaimValue)
+                    .HasColumnType("longtext")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_general_ci");
+
+                entity.Property(e => e.UserId)
+                    .IsRequired()
+                    .HasColumnType("varchar(255)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_general_ci");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.AspNetUserClaims)
+                    .HasForeignKey(d => d.UserId);
+            });
+
+            modelBuilder.Entity<AspNetUserLogins>(entity =>
+            {
+                entity.HasKey(e => new { e.LoginProvider, e.ProviderKey })
+                    .HasName("PRIMARY")
+                    .HasAnnotation("MySql:IndexPrefixLength", new[] { 0, 0 });
+
+                entity.HasIndex(e => e.UserId);
+
+                entity.Property(e => e.LoginProvider)
+                    .HasColumnType("varchar(128)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_general_ci");
+
+                entity.Property(e => e.ProviderKey)
+                    .HasColumnType("varchar(128)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_general_ci");
+
+                entity.Property(e => e.ProviderDisplayName)
+                    .HasColumnType("longtext")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_general_ci");
+
+                entity.Property(e => e.UserId)
+                    .IsRequired()
+                    .HasColumnType("varchar(255)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_general_ci");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.AspNetUserLogins)
+                    .HasForeignKey(d => d.UserId);
+            });
+
+            modelBuilder.Entity<AspNetUserRoles>(entity =>
+            {
+                entity.HasKey(e => new { e.UserId, e.RoleId })
+                    .HasName("PRIMARY")
+                    .HasAnnotation("MySql:IndexPrefixLength", new[] { 0, 0 });
+
+                entity.HasIndex(e => e.RoleId);
+
+                entity.Property(e => e.UserId)
+                    .HasColumnType("varchar(255)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_general_ci");
+
+                entity.Property(e => e.RoleId)
+                    .HasColumnType("varchar(255)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_general_ci");
+
+                entity.HasOne(d => d.Role)
+                    .WithMany(p => p.AspNetUserRoles)
+                    .HasForeignKey(d => d.RoleId);
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.AspNetUserRoles)
+                    .HasForeignKey(d => d.UserId);
+            });
+
+            modelBuilder.Entity<AspNetUserTokens>(entity =>
+            {
+                entity.HasKey(e => new { e.UserId, e.LoginProvider, e.Name })
+                    .HasName("PRIMARY")
+                    .HasAnnotation("MySql:IndexPrefixLength", new[] { 0, 0, 0 });
+
+                entity.Property(e => e.UserId)
+                    .HasColumnType("varchar(255)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_general_ci");
+
+                entity.Property(e => e.LoginProvider)
+                    .HasColumnType("varchar(128)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_general_ci");
+
+                entity.Property(e => e.Name)
+                    .HasColumnType("varchar(128)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_general_ci");
+
+                entity.Property(e => e.Value)
+                    .HasColumnType("longtext")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_general_ci");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.AspNetUserTokens)
+                    .HasForeignKey(d => d.UserId);
+            });
+
+            modelBuilder.Entity<AspNetUsers>(entity =>
+            {
+                entity.HasIndex(e => e.NormalizedEmail)
+                    .HasName("EmailIndex");
+
+                entity.HasIndex(e => e.NormalizedUserName)
+                    .HasName("UserNameIndex")
+                    .IsUnique();
+
+                entity.Property(e => e.Id)
+                    .HasColumnType("varchar(255)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_general_ci");
+
+                entity.Property(e => e.AccessFailedCount).HasColumnType("int(11)");
+
+                entity.Property(e => e.ConcurrencyStamp)
+                    .HasColumnType("longtext")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_general_ci");
+
+                entity.Property(e => e.Email)
+                    .HasColumnType("varchar(256)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_general_ci");
+
+                entity.Property(e => e.NormalizedEmail)
+                    .HasColumnType("varchar(256)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_general_ci");
+
+                entity.Property(e => e.NormalizedUserName)
+                    .HasColumnType("varchar(256)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_general_ci");
+
+                entity.Property(e => e.PasswordHash)
+                    .HasColumnType("longtext")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_general_ci");
+
+                entity.Property(e => e.PhoneNumber)
+                    .HasColumnType("longtext")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_general_ci");
+
+                entity.Property(e => e.SecurityStamp)
+                    .HasColumnType("longtext")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_general_ci");
+
+                entity.Property(e => e.UserName)
+                    .HasColumnType("varchar(256)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_general_ci");
+            });
+
+            modelBuilder.Entity<EfmigrationsHistory>(entity =>
+            {
+                entity.HasKey(e => e.MigrationId)
+                    .HasName("PRIMARY");
+
+                entity.ToTable("__EFMigrationsHistory");
+
+                entity.Property(e => e.MigrationId)
+                    .HasColumnType("varchar(95)")
+                    .HasCharSet("latin1")
+                    .HasCollation("latin1_swedish_ci");
+
+                entity.Property(e => e.ProductVersion)
+                    .IsRequired()
+                    .HasColumnType("varchar(32)")
+                    .HasCharSet("latin1")
+                    .HasCollation("latin1_swedish_ci");
+            });
+
             modelBuilder.Entity<Groups>(entity =>
             {
                 entity.HasKey(e => e.GroupId)
@@ -232,19 +489,10 @@ namespace QuestStore.Models
                     .HasName("PRIMARY");
 
                 entity.HasIndex(e => e.CredentialsId)
-                    .HasName("CredentialsId")
-                    .IsUnique();
-
-                entity.HasIndex(e => e.Email)
-                    .HasName("Email")
-                    .IsUnique();
+                    .HasName("FK_Users_AspNetUsers");
 
                 entity.HasIndex(e => e.GroupId)
                     .HasName("Users_FK");
-
-                entity.HasIndex(e => e.Login)
-                    .HasName("Login")
-                    .IsUnique();
 
                 entity.Property(e => e.UserId)
                     .HasColumnName("UserID")
@@ -252,39 +500,40 @@ namespace QuestStore.Models
 
                 entity.Property(e => e.Age).HasColumnType("int(3)");
 
-                entity.Property(e => e.CredentialsId).HasColumnType("varchar(255)");
-
-                entity.Property(e => e.Email)
+                entity.Property(e => e.CredentialsId)
                     .IsRequired()
-                    .HasColumnType("varchar(50)")
-                    .HasDefaultValueSql("''")
-                    .HasCharSet("utf8")
-                    .HasCollation("utf8_general_ci");
+                    .HasColumnType("varchar(255)")
+                    .HasCharSet("utf8mb4")
+                    .HasCollation("utf8mb4_general_ci");
 
                 entity.Property(e => e.Gender)
                     .IsRequired()
-                    .HasColumnType("enum('male','female')")
+                    .HasColumnType("enum('male','female','NK')")
+                    .HasDefaultValueSql("'NK'")
                     .HasCharSet("utf8")
                     .HasCollation("utf8_general_ci");
 
-                entity.Property(e => e.GroupId).HasColumnType("int(8)");
-
-                entity.Property(e => e.Login)
-                    .IsRequired()
-                    .HasColumnType("varchar(50)")
-                    .HasDefaultValueSql("''")
-                    .HasCharSet("utf8")
-                    .HasCollation("utf8_general_ci");
+                entity.Property(e => e.GroupId)
+                    .HasColumnType("int(8)")
+                    .HasDefaultValueSql("'1'");
 
                 entity.Property(e => e.Mentor)
                     .IsRequired()
                     .HasColumnType("enum('Y','N')")
+                    .HasDefaultValueSql("'N'")
                     .HasCharSet("utf8")
                     .HasCollation("utf8_general_ci");
+
+                entity.HasOne(d => d.Credentials)
+                    .WithMany(p => p.Users)
+                    .HasForeignKey(d => d.CredentialsId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Users_AspNetUsers");
 
                 entity.HasOne(d => d.Group)
                     .WithMany(p => p.Users)
                     .HasForeignKey(d => d.GroupId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("Users_FK");
             });
 

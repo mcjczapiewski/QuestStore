@@ -11,9 +11,9 @@ namespace QuestStore.Controllers
 {
     public class StoresController : ApplicationBaseController
     {
-        private readonly horizonp_ccqueststoreContext _context;
+        private readonly horizonp_questcredentialsContext _context;
 
-        public StoresController(horizonp_ccqueststoreContext context)
+        public StoresController(horizonp_questcredentialsContext context)
         {
             _context = context;
         }
@@ -21,8 +21,8 @@ namespace QuestStore.Controllers
         // GET: Stores
         public async Task<IActionResult> Index()
         {
-            var horizonp_ccqueststoreContext = _context.Store.Include(s => s.Item);
-            return View(await horizonp_ccqueststoreContext.ToListAsync());
+            var horizonp_questcredentialsContext = _context.Store.Include(s => s.Item);
+            return View(await horizonp_questcredentialsContext.ToListAsync());
         }
 
         // GET: Stores/Details/5
