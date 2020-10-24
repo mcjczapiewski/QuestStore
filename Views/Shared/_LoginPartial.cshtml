@@ -3,14 +3,14 @@
 @inject SignInManager<IdentityUser> SignInManager
 @inject UserManager<IdentityUser> UserManager
 
-            <ul class="navbar-nav">
+<ul class="navbar-nav">
     @if (SignInManager.IsSignedIn(User) && ViewData.ContainsKey("UserLogin"))
     {
         <li class="nav-item">
             <div class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Coins:  </div>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @ViewData["UserLogin"]!</a>
+            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @User.Identity.Name!</a>
         </li>
         <li class="nav-item">
             <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
