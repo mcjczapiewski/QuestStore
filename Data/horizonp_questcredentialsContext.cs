@@ -1,7 +1,9 @@
 ﻿using System;
+using System.IO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json.Linq;
 
 namespace QuestStore.Models
 {
@@ -36,14 +38,25 @@ namespace QuestStore.Models
         public virtual DbSet<UsersTech> UsersTech { get; set; }
         public virtual DbSet<Wallet> Wallet { get; set; }
 
-        private readonly IConfiguration _configuration;
+        //private readonly IConfiguration _configuration;
+
+        //public horizonp_questcredentialsContext(IConfiguration configuration)
+        //{
+        //    _configuration = configuration;
+        //}
+
+        static JToken jAppSettings = JToken.Parse( 
+            File.ReadAllText(Path.Combine(Environment.CurrentDirectory, 
+                "appsettings.json")));
+
+        string conn = jAppSettings.SelectToken("ConnectionStrings").SelectToken("OverrideConnection").Value<string>();
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseMySql(_configuration.GetConnectionString("OverrideConnection"), x => x.ServerVersion("10.3.17-mariadb"));
+                optionsBuilder.UseMySql(conn, x => x.ServerVersion("10.3.17-mariadb"));
             }
         }
 
