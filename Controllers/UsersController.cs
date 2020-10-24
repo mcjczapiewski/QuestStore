@@ -92,7 +92,7 @@ namespace QuestStore.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("UserId,Login,Email,Gender,Age,Mentor,GroupId,CredentialsId")] Users users)
+        public async Task<IActionResult> Edit(int id, [Bind("UserId,Gender,Age,Mentor,GroupId")] Users users)
         {
             if (id != users.UserId)
             {
@@ -103,7 +103,11 @@ namespace QuestStore.Controllers
             {
                 try
                 {
-                    _context.Update(users);
+                    var updateUser = _context.Users.Single(u => u.UserId == id);
+                    updateUser.Gender = users.Gender;
+                    updateUser.Mentor = users.Mentor;
+                    updateUser.GroupId = users.GroupId;
+                    updateUser.Age = users.Age;
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
