@@ -15,7 +15,11 @@
             <input type="hidden" asp-for="UserId" />
             <div class="form-group">
                 <label asp-for="Gender" class="control-label"></label>
-                <input asp-for="Gender" class="form-control" />
+                <select asp-for="Gender" class="form-control">
+                    <option value="female">female</option>
+                    <option value="male">male</option>
+                    <option value="NK">don't wanna tell</option>
+                </select>
                 <span asp-validation-for="Gender" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -25,7 +29,10 @@
             </div>
             <div class="form-group">
                 <label asp-for="Mentor" class="control-label"></label>
-                <input asp-for="Mentor" class="form-control" />
+                <select>
+                    <option value="Y">Yes</option>
+                    <option value="N">No</option>
+                </select>
                 <span asp-validation-for="Mentor" class="text-danger"></span>
             </div>
             <div class="form-group">
