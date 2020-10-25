@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -45,6 +46,7 @@ namespace QuestStore.Controllers
         }
 
         // GET: Stores/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             ViewData["ItemId"] = new SelectList(_context.Items, "ItemId", "Extra");
@@ -56,6 +58,7 @@ namespace QuestStore.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("StoreItemId,ItemId,NumberAvailable,Price")] Store store)
         {
             if (ModelState.IsValid)
@@ -69,6 +72,7 @@ namespace QuestStore.Controllers
         }
 
         // GET: Stores/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id)
         {
             if (id == null)
@@ -90,6 +94,7 @@ namespace QuestStore.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, [Bind("StoreItemId,ItemId,NumberAvailable,Price")] Store store)
         {
             if (id != store.StoreItemId)
@@ -122,6 +127,7 @@ namespace QuestStore.Controllers
         }
 
         // GET: Stores/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             if (id == null)
@@ -143,6 +149,7 @@ namespace QuestStore.Controllers
         // POST: Stores/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var store = await _context.Store.FindAsync(id);
