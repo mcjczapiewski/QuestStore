@@ -4,11 +4,14 @@
 @inject UserManager<IdentityUser> UserManager
 
 <ul class="navbar-nav">
-    @if (SignInManager.IsSignedIn(User) && ViewData.ContainsKey("UserLogin"))
+    @if (SignInManager.IsSignedIn(User))
     {
-        <li class="nav-item">
-            <div class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Coins:  </div>
-        </li>
+        @if (User.IsInRole("Student"))
+        {
+            <li class="nav-item">
+                <div class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Coins: </div>
+            </li>
+        }
         <li class="nav-item">
             <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @User.Identity.Name!</a>
         </li>
