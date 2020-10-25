@@ -36,10 +36,6 @@ namespace QuestStore
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
-            services.AddAuthorization(opts =>
-            {
-                opts.AddPolicy("AdminUser", policy => { policy.RequireRole("Admin"); });
-            });
             services.AddControllersWithViews();
             services.AddRazorPages();
         }
