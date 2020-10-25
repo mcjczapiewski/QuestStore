@@ -1,5 +1,7 @@
 ﻿@using System.Text.RegularExpressions
+@using Microsoft.AspNetCore.Identity
 @model IEnumerable<QuestStore.Models.Users>
+@inject UserManager<IdentityUser> UserManager
 
 @{
     ViewData["Title"] = "Index";
@@ -13,6 +15,9 @@
 <table class="table">
     <thead>
         <tr>
+            <th>
+                Name
+            </th>
             <th>
                 @Html.DisplayNameFor(model => model.Gender)
             </th>
@@ -31,6 +36,9 @@
     <tbody>
 @foreach (var item in Model) {
         <tr>
+            <td>
+                @UserManager.Users.Single(u => u.Id == item.CredentialsId).UserName
+            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Gender)
             </td>
