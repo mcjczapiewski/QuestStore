@@ -1,63 +1,22 @@
 ﻿@model IEnumerable<QuestStore.Models.Quests>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Quests";
+    ViewData["ShowButtons"] = true;
 }
 
-<h1>Index</h1>
+<h1>All quests list</h1>
 
 @if (User.IsInRole("Admin"))
 {
-    <p>
+    <p align="right">
         <a asp-action="Create">Create New</a>
     </p>
 }
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Reward)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Extra)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Reward)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Extra)
-            </td>
-            <td>
-                @if (User.IsInRole("Student") || User.IsInRole("Admin"))
-                {
-                    <a asp-action="Details" asp-route-id="@item.QuestId">Details</a>
-                }
-                @if (User.IsInRole("Admin"))
-                {
-                    @: | 
-                    <a asp-action="Edit" asp-route-id="@item.QuestId">Edit</a>@: |
-                    <a asp-action="Delete" asp-route-id="@item.QuestId">Delete</a>
-                }
-            </td>
-        </tr>
+else
+{
+    <h4 align="right" style="color:navy">
+        <a asp-action="MyQuests">My Quests</a>
+    </h4>
 }
-    </tbody>
-</table>
+<partial name="_DisplayQuestsPartial" view-data="ViewData" />

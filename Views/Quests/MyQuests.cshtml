@@ -1,0 +1,10 @@
+﻿@model IEnumerable<QuestStore.Models.Quests>
+
+@{
+    ViewBag.Title = "My Quests";
+    ViewData["ShowButtons"] = false;
+}
+
+<h2>My quests</h2>
+
+<partial name="_DisplayQuestsPartial" view-data="ViewData" />
