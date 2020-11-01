@@ -1,20 +1,24 @@
-﻿@model QuestStore.Models.UsersQuests
+﻿@model QuestStore.Models.Quests
 
 @{
     ViewData["Title"] = "SignOn";
 }
 
-<h1>You're now on this quest!</h1>
+@if (ViewData["Exists"] is true)
+{
+    <h1 style="color: red">You are already on that quest!</h1>
+}
+else
+{
+    <h1>You're now on this quest!</h1>
+}
 
 <h3>Good luck and have fun!</h3>
 <div>
-    <h4>UsersQuests</h4>
+    <h4>@ViewData["QuestTitle"]</h4>
     <hr />
     <dl class="row">
     </dl>
-    
-    <form asp-action="SignOn">
-        <input type="hidden" asp-for="UsersQuestId" />
-        <a asp-action="Index">Back to List</a>
-    </form>
+
+    <a asp-action="Index">Back to List</a>
 </div>

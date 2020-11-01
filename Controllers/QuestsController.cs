@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
@@ -58,6 +59,12 @@ namespace QuestStore.Controllers
                 .Where(i => i.CredentialsId == User.FindFirstValue(ClaimTypes.NameIdentifier))
                 .Select(uid => uid.UserId)
                 .Single();
+            ViewData["QuestTitle"] = quests.Title;
+            if (_context.UsersQuests.Any(o => o.QuestId == quests.QuestId && o.UserId == userId))
+            {
+                ViewData["Exists"] = true;
+                return View();
+            }
             UsersQuests usersQuests = new UsersQuests();
             usersQuests.UserId = userId;
             usersQuests.QuestId = quests.QuestId;
