@@ -40,6 +40,36 @@ namespace QuestStore.Controllers
             return View(quests);
         }
 
+        public async Task<IActionResult> SignOn(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var quests = await _context.Quests
+                .FirstOrDefaultAsync(m => m.QuestId == id);
+            if (quests == null)
+            {
+                return NotFound();
+            }
+
+            var userId = _context.Users
+                .Where(i => i.CredentialsId == User.FindFirstValue(ClaimTypes.NameIdentifier))
+                .Select(uid => uid.UserId)
+                .Single();
+            UsersQuests usersQuests = new UsersQuests();
+            usersQuests.UserId = userId;
+            usersQuests.QuestId = quests.QuestId;
+            usersQuests.Status = "In progress";
+            if (ModelState.IsValid)
+            {
+                _context.Add(usersQuests);
+                await _context.SaveChangesAsync();
+            }
+            return View();
+        }
+
         // GET: Quests/Details/5
         public async Task<IActionResult> Details(int? id)
         {

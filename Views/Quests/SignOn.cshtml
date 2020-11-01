@@ -1,0 +1,20 @@
+﻿@model QuestStore.Models.UsersQuests
+
+@{
+    ViewData["Title"] = "SignOn";
+}
+
+<h1>You're now on this quest!</h1>
+
+<h3>Good luck and have fun!</h3>
+<div>
+    <h4>UsersQuests</h4>
+    <hr />
+    <dl class="row">
+    </dl>
+    
+    <form asp-action="SignOn">
+        <input type="hidden" asp-for="UsersQuestId" />
+        <a asp-action="Index">Back to List</a>
+    </form>
+</div>
