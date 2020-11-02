@@ -408,7 +408,7 @@ namespace QuestStore.Models
                     .HasCharSet("utf8")
                     .HasCollation("utf8_general_ci");
 
-                entity.Property(e => e.Reward).HasColumnType("double(10,2)");
+                entity.Property(e => e.Reward).HasColumnType("int(10)");
 
                 entity.Property(e => e.Title)
                     .IsRequired()
