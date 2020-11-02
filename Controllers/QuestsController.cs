@@ -78,6 +78,15 @@ namespace QuestStore.Controllers
             return View();
         }
 
+        public async Task<IActionResult> GiveUp(int? id)
+        {
+            var abandonedQuest = _context.UsersQuests
+                .Single(i => i.QuestId == id);
+            _context.UsersQuests.Remove(abandonedQuest);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(MyQuests));
+        }
+
         // GET: Quests/Details/5
         public async Task<IActionResult> Details(int? id)
         {

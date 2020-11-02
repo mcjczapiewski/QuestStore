@@ -39,6 +39,12 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Extra)
             </td>
+            @if (ViewBag.Title == "My Quests")
+            {
+                <td>
+                    <a asp-action="GiveUp" asp-route-id="@item.QuestId">Give up...</a>
+                </td>
+            }
             @if (showButtons)
             {
                 <td>
