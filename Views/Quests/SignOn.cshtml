@@ -3,17 +3,20 @@
 @{
     ViewData["Title"] = "SignOn";
 }
-
+<br/>
 @if (ViewData["Exists"] is true)
 {
-    <h1 style="color: red">You are already on that quest!</h1>
+    <h1 style="color: red" align="center">You are already on that quest!</h1>
 }
 else
 {
-    <h1>You're now on this quest!</h1>
+    <h1 align="center">You're now on this quest!</h1>
 }
 
+<br/>
+<br/>
 <h3>Good luck and have fun!</h3>
+<br/>
 <div>
     <h4>@ViewData["QuestTitle"]</h4>
     <hr />

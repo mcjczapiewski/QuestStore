@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using QuestStore.Models;
+using QuestStore.ViewModels;
 
 namespace QuestStore.Controllers
 {
@@ -181,14 +182,27 @@ namespace QuestStore.Controllers
                 return NotFound();
             }
 
-            var quests = await _context.Quests
+            UserNameOnQuest userNameOnQuest = new UserNameOnQuest();
+            userNameOnQuest.Quests = await _context.Quests
                 .FirstOrDefaultAsync(m => m.QuestId == id);
-            if (quests == null)
+            if (userNameOnQuest.Quests == null)
             {
                 return NotFound();
             }
-
-            return View(quests);
+            var usersIdOnThisQuest = _context.UsersQuests
+                .Where(i => i.QuestId == id)
+                .Select(i => i.UserId)
+                .ToList();
+            var aspUsersOnThatQuest = _context.Users
+                .Where(i => usersIdOnThisQuest.Contains(i.UserId))
+                .Select(i => i.CredentialsId)
+                .ToList();
+            userNameOnQuest.UsersNameList = _context.AspNetUsers
+                .Where(i => aspUsersOnThatQuest.Contains(i.Id))
+                .Select(i => i.UserName)
+                .ToList();
+            
+            return View(userNameOnQuest);
         }
 
         // POST: Quests/Delete/5
