@@ -22,6 +22,7 @@ namespace QuestStore.Models
         public string Mentor { get; set; }
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int GroupId { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string CredentialsId { get; set; }
 
         public virtual AspNetUsers Credentials { get; set; }

@@ -46,30 +46,6 @@ namespace QuestStore.Controllers
             return View(users);
         }
 
-        // GET: Users/Create
-        public IActionResult Create()
-        {
-            ViewData["GroupId"] = new SelectList(_context.Groups, "GroupId", "Name");
-            return View();
-        }
-
-        // POST: Users/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("UserId,Login,Email,Gender,Age,Mentor,GroupId,CredentialsId")] Users users)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(users);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["GroupId"] = new SelectList(_context.Groups, "GroupId", "Name", users.GroupId);
-            return View(users);
-        }
-
         // GET: Users/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {

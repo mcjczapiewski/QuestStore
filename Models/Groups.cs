@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace QuestStore.Models
 {
@@ -13,6 +14,7 @@ namespace QuestStore.Models
 
         public int GroupId { get; set; }
         public string Name { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public int NumberOfPpl { get; set; }
 
         public virtual ICollection<GroupsQuests> GroupsQuests { get; set; }

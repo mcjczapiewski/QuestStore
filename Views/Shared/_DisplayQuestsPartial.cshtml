@@ -44,7 +44,11 @@
                 <td>
                     @if (User.IsInRole("Student") || User.IsInRole("Admin"))
                     {
-                        <a asp-action="Details" asp-route-id="@item.QuestId">Details</a> @: | 
+                        <a asp-action="Details" asp-route-id="@item.QuestId">Details</a>
+                    }
+                    @if (User.IsInRole("Student"))
+                    {
+                        @: | 
                         <a asp-action="SignOn" asp-route-id="@item.QuestId">Sign On</a>
                     }
                     @if (User.IsInRole("Admin"))
