@@ -525,8 +525,8 @@ namespace QuestStore.Models
 
                 entity.Property(e => e.Mentor)
                     .IsRequired()
-                    .HasColumnType("enum('Y','N')")
-                    .HasDefaultValueSql("'N'")
+                    .HasColumnType("tinyint(1)")
+                    .HasDefaultValueSql("0")
                     .HasCharSet("utf8")
                     .HasCollation("utf8_general_ci");
 

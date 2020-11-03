@@ -2,6 +2,7 @@
 @using Microsoft.EntityFrameworkCore.Infrastructure
 @inject SignInManager<IdentityUser> SignInManager
 @inject UserManager<IdentityUser> UserManager
+@inject IEnumerable<QuestStore.Models.Wallet> UserWallet
 
 <ul class="navbar-nav">
     @if (SignInManager.IsSignedIn(User))
@@ -9,7 +10,7 @@
         @if (User.IsInRole("Student"))
         {
             <li class="nav-item">
-                <div class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Coins: </div>
+                <div class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Coins: @UserWallet.FirstOrDefault(m => m.User.CredentialsId == UserManager.GetUserId(User)).Balance </div>
             </li>
         }
         <li class="nav-item">

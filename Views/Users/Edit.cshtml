@@ -29,12 +29,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="Mentor" class="control-label"></label>
-                @*<select>
-            <option value="Y">Yes</option>
-            <option value="N">No</option>
-        </select>*@
-
-                <input asp-for="Mentor" class="form-control" />
+                <div>@Html.CheckBoxFor(m => m.Mentor)</div>
                 <span asp-validation-for="Mentor" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -42,6 +37,13 @@
                 <select asp-for="GroupId" class="form-control" asp-items="ViewBag.GroupId"></select>
                 <span asp-validation-for="GroupId" class="text-danger"></span>
             </div>
+            <div class="form-group">
+                <label asp-for="Wallet.Balance" class="control-label">Wallet</label>
+                <div>@Html.TextBoxFor(m => m.Wallet.Balance)</div>
+                @*<input asp-for="Wallet.Balance" class="form-control" />*@
+                <span asp-validation-for="Wallet.Balance" class="text-danger"></span>
+            </div>
+
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
