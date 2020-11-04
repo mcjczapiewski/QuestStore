@@ -31,6 +31,7 @@ namespace QuestStore.Controllers
         }
 
         // GET: Quests/MyQuests
+        [Authorize(Roles = "Student")]
         public async Task<IActionResult> MyQuests()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -41,7 +42,7 @@ namespace QuestStore.Controllers
                 .ToListAsync();
             return View(quests);
         }
-
+        [Authorize(Roles = "Student")]
         public async Task<IActionResult> SignOn(int? id)
         {
             if (id == null)
@@ -78,6 +79,7 @@ namespace QuestStore.Controllers
             return View();
         }
 
+        [Authorize(Roles = "Student")]
         public async Task<IActionResult> GiveUp(int? id)
         {
             var abandonedQuest = _context.UsersQuests
@@ -106,18 +108,19 @@ namespace QuestStore.Controllers
         }
 
         // GET: Quests/Create
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Mentor")]
         public IActionResult Create()
         {
             return View();
         }
 
         // POST: Quests/Create
-        [Authorize(Roles = "Admin, Mentor")]
+        
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, Mentor")]
         public async Task<IActionResult> Create([Bind("QuestId,Title,Reward,Description,Extra")] Quests quests)
         {
             if (ModelState.IsValid)
