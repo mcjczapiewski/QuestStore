@@ -24,6 +24,7 @@ namespace QuestStore.Controllers
                 if (!string.IsNullOrEmpty(currentUserId))
                 {
                     var user = context.Users.SingleOrDefault(u => u.CredentialsId == currentUserId);
+                    ViewData["LoggedUserBalance"] = context.Wallet.FirstOrDefault(m => m.UserId == user.UserId)?.Balance ?? 0;
                     ViewData.Add("UserLogin", user?.Gender);
                 }
             }
