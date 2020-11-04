@@ -113,7 +113,7 @@ namespace QuestStore.Controllers
         }
 
         // POST: Quests/Create
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Mentor")]
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
@@ -130,7 +130,7 @@ namespace QuestStore.Controllers
         }
 
         // GET: Quests/Edit/5
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Mentor")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -151,7 +151,7 @@ namespace QuestStore.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Mentor")]
         public async Task<IActionResult> Edit(int id, [Bind("QuestId,Title,Reward,Description,Extra")] Quests quests)
         {
             if (id != quests.QuestId)
@@ -183,7 +183,7 @@ namespace QuestStore.Controllers
         }
 
         // GET: Quests/Delete/5
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Mentor")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -217,7 +217,7 @@ namespace QuestStore.Controllers
         // POST: Quests/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Mentor")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var quests = await _context.Quests.FindAsync(id);

@@ -48,7 +48,7 @@
             @if (showButtons)
             {
                 <td>
-                    @if (User.IsInRole("Student") || User.IsInRole("Admin"))
+                    @if (User.IsInRole("Student") || User.IsInRole("Admin") || User.IsInRole("Mentor"))
                     {
                         <a asp-action="Details" asp-route-id="@item.QuestId">Details</a>
                     }
@@ -57,7 +57,7 @@
                         @: | 
                         <a asp-action="SignOn" asp-route-id="@item.QuestId">Sign On</a>
                     }
-                    @if (User.IsInRole("Admin"))
+                    @if (User.IsInRole("Admin") || User.IsInRole("Mentor"))
                     {
                         @: | 
                         <a asp-action="Edit" asp-route-id="@item.QuestId">Edit</a>@: |

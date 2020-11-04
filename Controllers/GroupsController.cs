@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -43,6 +44,7 @@ namespace QuestStore.Controllers
         }
 
         // GET: Groups/Create
+        [Authorize(Roles ="Admin, Mentor")]
         public IActionResult Create()
         {
             return View();
@@ -53,6 +55,7 @@ namespace QuestStore.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles ="Admin, Mentor")]
         public async Task<IActionResult> Create([Bind("GroupId,Name,NumberOfPpl")] Groups groups)
         {
             if (ModelState.IsValid)
@@ -65,6 +68,7 @@ namespace QuestStore.Controllers
         }
 
         // GET: Groups/Edit/5
+        [Authorize(Roles ="Admin, Mentor")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -85,6 +89,7 @@ namespace QuestStore.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles ="Admin, Mentor")]
         public async Task<IActionResult> Edit(int id, [Bind("GroupId,Name,NumberOfPpl")] Groups groups)
         {
             if (id != groups.GroupId)
@@ -116,6 +121,7 @@ namespace QuestStore.Controllers
         }
 
         // GET: Groups/Delete/5
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -136,6 +142,7 @@ namespace QuestStore.Controllers
         // POST: Groups/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var groups = await _context.Groups.FindAsync(id);
