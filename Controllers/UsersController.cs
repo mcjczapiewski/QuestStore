@@ -23,9 +23,14 @@ namespace QuestStore.Controllers
         }
 
         // GET: Users
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
-            var horizonp_questcredentialsContext = _context.Users.Include(u => u.Group);
+            var horizonp_questcredentialsContext = from h in _context.Users.Include(u => u.Group)
+                                                   select h;
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                horizonp_questcredentialsContext = horizonp_questcredentialsContext.Where(s => s.CredentialsId.Contains(searchString));
+            }
             return View(await horizonp_questcredentialsContext.ToListAsync());
         }
 
