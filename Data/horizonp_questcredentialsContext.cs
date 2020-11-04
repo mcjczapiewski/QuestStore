@@ -376,7 +376,7 @@ namespace QuestStore.Models
 
                 entity.Property(e => e.Extra)
                     .IsRequired()
-                    .HasColumnType("enum('Y','N')")
+                    .HasColumnType("tinyint(1)")
                     .HasCharSet("utf8")
                     .HasCollation("utf8_general_ci");
 
@@ -404,7 +404,7 @@ namespace QuestStore.Models
 
                 entity.Property(e => e.Extra)
                     .IsRequired()
-                    .HasColumnType("enum('Y','N')")
+                    .HasColumnType("tinyint(1)")
                     .HasCharSet("utf8")
                     .HasCollation("utf8_general_ci");
 

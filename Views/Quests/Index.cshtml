@@ -7,7 +7,7 @@
 
 <h1>All quests list</h1>
 
-@if (User.IsInRole("Admin"))
+@if (User.IsInRole("Admin") || User.IsInRole("Mentor"))
 {
     <p align="right">
         <a asp-action="Create">Create New</a>
