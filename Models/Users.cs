@@ -14,6 +14,8 @@ namespace QuestStore.Models
         }
 
         public int UserId { get; set; }
+        public string Name { get; set; }
+        public string Surname { get; set; }
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string Gender { get; set; }
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

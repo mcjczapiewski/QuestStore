@@ -77,7 +77,7 @@ namespace QuestStore.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin, Mentor")]
-        public async Task<IActionResult> Edit(int id, [Bind("UserId,Gender,Age,Mentor,GroupId")] Users users)
+        public async Task<IActionResult> Edit(int id, [Bind("UserId,Gender,Age,Mentor,GroupId,Name,Surname")] Users users)
         {
             if (id != users.UserId)
             {
@@ -89,6 +89,8 @@ namespace QuestStore.Controllers
                 try
                 {
                     var updateUser = _context.Users.Single(u => u.UserId == id);
+                    updateUser.Name = users.Name;
+                    updateUser.Surname = users.Surname;
                     updateUser.Gender = users.Gender;
                     updateUser.Mentor = users.Mentor;
                     updateUser.GroupId = users.GroupId;

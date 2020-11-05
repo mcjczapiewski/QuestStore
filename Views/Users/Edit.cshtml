@@ -21,6 +21,16 @@
             @if (User.IsInRole("Admin"))
             {
             <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Surname" class="control-label"></label>
+                <input asp-for="Surname" class="form-control" />
+                <span asp-validation-for="Surname" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="Gender" class="control-label"></label>
                 <select asp-for="Gender" class="form-control">
                     <option value="female">female</option>
@@ -42,7 +52,6 @@
             <div class="form-group">
                 <label asp-for="Wallet.Balance" class="control-label">Wallet</label>
                 <div>@Html.TextBoxFor(m => m.Wallet.Balance)</div>
-                @*<input asp-for="Wallet.Balance" class="form-control" />*@
                 <span asp-validation-for="Wallet.Balance" class="text-danger"></span>
             </div>
 
