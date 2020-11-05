@@ -523,6 +523,14 @@ namespace QuestStore.Models
                     .HasColumnType("int(8)")
                     .HasDefaultValueSql("'1'");
 
+                entity.Property(e => e.Name)
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                entity.Property(e => e.Surname)
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("longtext CHARACTER SET utf8mb4");
+
                 entity.Property(e => e.Mentor)
                     .IsRequired()
                     .HasColumnType("tinyint(1)")
