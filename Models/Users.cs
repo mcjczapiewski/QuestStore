@@ -14,12 +14,14 @@ namespace QuestStore.Models
         }
 
         public int UserId { get; set; }
+        public string Name { get; set; }
+        public string Surname { get; set; }
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string Gender { get; set; }
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Age { get; set; }
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public bool? Mentor { get; set; }
+        public bool Mentor { get; set; }
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int GroupId { get; set; }
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
