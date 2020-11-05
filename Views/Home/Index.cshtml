@@ -3,8 +3,14 @@
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h1 class="display-4">Welcome to Queststore!</h1>
+    <p>These are the achievements that give you coolcoins (cc). There are 2 types of challenges: basics and extras.<br /> 
+    The first type has a consistent frequency and provide a basic income. The extras are opportunities to get more Coolcoins beyond recurring quests.</p>
+
+    <p>There is a <a asp-area="" asp-controller="Stores" asp-action="">Shop</a> which is a platform where you can use your well earned coolcoins to buy certain events. <br />
+    The store items do not have any material value they represent activities or events that enhance the Codecool experience. <br />
+    The store offers two type of items basic and extra (magic). Basic items are meant for individual buyers while extra items are designed to be purchased by a group of students. <br />
+    Assortment and prices can be changed at the beggining of week, depending on demand and supply.</p>
     <h2>@ViewData["accUser"]</h2>
     <h1>@ViewData["valid"]</h1>
 
