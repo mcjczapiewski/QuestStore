@@ -29,7 +29,7 @@ namespace QuestStore.Controllers
                                                    select h;
             if (!String.IsNullOrEmpty(searchString))
             {
-                horizonp_questcredentialsContext = horizonp_questcredentialsContext.Where(s => s.CredentialsId.Contains(searchString));
+                horizonp_questcredentialsContext = horizonp_questcredentialsContext.Where(s => s.Surname.Contains(searchString) || s.Name.Contains(searchString));
             }
             return View(await horizonp_questcredentialsContext.ToListAsync());
         }
