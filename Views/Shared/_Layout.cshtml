@@ -27,6 +27,9 @@
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="">Users</a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Items" asp-action="">Items</a>
+                            </li>
                         }
                         @if (User.IsInRole("Student") || User.IsInRole("Admin") || User.IsInRole("Mentor"))
                         {
@@ -35,12 +38,6 @@
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Stores" asp-action="">Shop</a>
-                            </li>
-                        }
-                        @if (User.IsInRole("Student"))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Wallets" asp-action="">My Wallet</a>
                             </li>
                         }
                     </ul>

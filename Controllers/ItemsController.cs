@@ -24,24 +24,6 @@ namespace QuestStore.Controllers
             return View(await _context.Items.ToListAsync());
         }
 
-        // GET: Items/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var items = await _context.Items
-                .FirstOrDefaultAsync(m => m.ItemId == id);
-            if (items == null)
-            {
-                return NotFound();
-            }
-
-            return View(items);
-        }
-
         // GET: Items/Create
         public IActionResult Create()
         {
