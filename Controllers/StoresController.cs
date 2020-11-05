@@ -29,7 +29,7 @@ namespace QuestStore.Controllers
 
         // GET: Stores/Edit/5
         [Authorize(Roles = "Admin, Mentor")]
-        public async Task<IActionResult> Edit(int id)
+        public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {

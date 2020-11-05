@@ -36,13 +36,12 @@
             </div>
             <div class="form-group">
                 <label asp-for="Mentor" class="control-label"></label>
-                <div>@Html.CheckBoxFor(m => m.Mentor)</div>
+                <div>@Html.CheckBoxFor(m => m.Mentor ?? false)</div>
                 <span asp-validation-for="Mentor" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Wallet.Balance" class="control-label">Wallet</label>
                 <div>@Html.TextBoxFor(m => m.Wallet.Balance)</div>
-                @*<input asp-for="Wallet.Balance" class="form-control" />*@
                 <span asp-validation-for="Wallet.Balance" class="text-danger"></span>
             </div>
 

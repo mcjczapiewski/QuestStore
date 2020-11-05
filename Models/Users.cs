@@ -19,7 +19,7 @@ namespace QuestStore.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Age { get; set; }
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public bool Mentor { get; set; }
+        public bool? Mentor { get; set; }
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int GroupId { get; set; }
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
