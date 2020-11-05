@@ -10,6 +10,7 @@ using QuestStore.Models;
 
 namespace QuestStore.Controllers
 {
+    [Authorize]
     public class StoresController : ApplicationBaseController
     {
         private readonly horizonp_questcredentialsContext _context;
