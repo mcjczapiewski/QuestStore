@@ -6,12 +6,6 @@
 
 <h1>Index</h1>
 
-@if (User.IsInRole("Admin") || User.IsInRole("Mentor"))
-{
-    <p>
-        <a asp-action="Create">Create New</a>
-    </p>
-}
 <table class="table">
     <thead>
         <tr>
@@ -23,9 +17,6 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Price)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Item.Extra)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Item.Category)
@@ -46,16 +37,12 @@
                 @Html.DisplayFor(modelItem => item.Price)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Item.Extra)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.Item.Category)
             </td>
             <td>
                 @if (User.IsInRole("Admin") || User.IsInRole("Mentor"))
                 {
-                    <a asp-action="Edit" asp-route-id="@item.StoreItemId">Edit</a>@: |
-                    <a asp-action="Delete" asp-route-id="@item.StoreItemId">Delete</a>
+                    <a asp-action="Edit" asp-route-id="@item.StoreItemId">Edit</a>
                 }
             </td>
         </tr>

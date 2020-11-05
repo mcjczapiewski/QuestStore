@@ -20,7 +20,13 @@
     <thead>
         <tr>
             <th>
-                Name
+                Login
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Surname)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Gender)
@@ -42,6 +48,12 @@
         <tr>
             <td>
                 @UserManager.Users.Single(u => u.Id == item.CredentialsId).UserName
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Surname)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Gender)

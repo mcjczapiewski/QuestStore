@@ -15,14 +15,16 @@ namespace QuestStore.Areas.Identity.Pages.Account.Manage
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly horizonp_questcredentialsContext _context;
         
-
         public IndexModel(
             UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager)
+            SignInManager<IdentityUser> signInManager,
+            horizonp_questcredentialsContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _context = context;
             
         }
 
@@ -40,6 +42,9 @@ namespace QuestStore.Areas.Identity.Pages.Account.Manage
             [Display(Name = "Phone number")]
             public string PhoneNumber { get; set; }
 
+            [Display(Name = "Name")]
+            public string NewUsername { get; set; }
+
             public Users LoggedUser { get; set; }
         }
 
@@ -47,18 +52,15 @@ namespace QuestStore.Areas.Identity.Pages.Account.Manage
         {
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
-            //// TODO 
-            var context = new horizonp_questcredentialsContext();
-            Users loggedUser = context.Users.FirstOrDefault(u => u.CredentialsId == user.Id);
+            Users loggedUser = _context.Users.FirstOrDefault(u => u.CredentialsId == user.Id);
 
             Username = userName;
 
             Input = new InputModel
             {
+                NewUsername = userName,
                 PhoneNumber = phoneNumber,
                 LoggedUser = loggedUser
-
-                
             };
         }
 
@@ -88,6 +90,7 @@ namespace QuestStore.Areas.Identity.Pages.Account.Manage
                 return Page();
             }
 
+            var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
             if (Input.PhoneNumber != phoneNumber)
             {
@@ -98,7 +101,21 @@ namespace QuestStore.Areas.Identity.Pages.Account.Manage
                     return RedirectToPage();
                 }
             }
-
+            if (Input.NewUsername != userName)
+            {
+                var setNameResult = await _userManager.SetUserNameAsync(user, Input.NewUsername);
+                if (!setNameResult.Succeeded)
+                {
+                    StatusMessage = "This name is probably taken.";
+                    return RedirectToPage();
+                }
+            }
+            var userUpdate = _context.Users
+                .Single(u => u.CredentialsId == user.Id);
+            userUpdate.Gender = Input.LoggedUser.Gender;
+            userUpdate.Name = Input.LoggedUser.Name;
+            userUpdate.Surname = Input.LoggedUser.Surname;
+            await _context.SaveChangesAsync();
             await _signInManager.RefreshSignInAsync(user);
             StatusMessage = "Your profile has been updated";
             return RedirectToPage();
