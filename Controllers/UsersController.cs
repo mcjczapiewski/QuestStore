@@ -89,12 +89,15 @@ namespace QuestStore.Controllers
                 try
                 {
                     var updateUser = _context.Users.Single(u => u.UserId == id);
-                    updateUser.Name = users.Name;
-                    updateUser.Surname = users.Surname;
-                    updateUser.Gender = users.Gender;
-                    updateUser.Mentor = users.Mentor;
+                    if (User.IsInRole("Admin"))
+                    {
+                        updateUser.Name = users.Name;
+                        updateUser.Surname = users.Surname;
+                        updateUser.Gender = users.Gender;
+                        updateUser.Mentor = users.Mentor;
+                        updateUser.Age = users.Age;
+                    };
                     updateUser.GroupId = users.GroupId;
-                    updateUser.Age = users.Age;
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
