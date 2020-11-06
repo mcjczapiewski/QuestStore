@@ -476,6 +476,12 @@ namespace QuestStore.Models
 
                 entity.Property(e => e.UserId).HasColumnType("int(11)");
 
+                entity.Property(e => e.ItemUsed)
+                    .IsRequired()
+                    .HasColumnType("tinyint(1)")
+                    .HasCharSet("utf8")
+                    .HasCollation("utf8_general_ci");
+
                 entity.HasOne(d => d.Item)
                     .WithMany(p => p.UserInventory)
                     .HasForeignKey(d => d.ItemId)
@@ -620,7 +626,7 @@ namespace QuestStore.Models
 
                 entity.Property(e => e.WalletId).HasColumnType("int(10)");
 
-                entity.Property(e => e.Balance).HasColumnType("double(10,2)");
+                entity.Property(e => e.Balance).HasColumnType("decimal(10,2)");
 
                 entity.Property(e => e.UserId).HasColumnType("int(10)");
 

@@ -1,0 +1,50 @@
+﻿@model IEnumerable<QuestStore.Models.UserInventory>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Item.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Item.Category)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Item.Extra)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ItemUsed)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Item.Category)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Item.Extra)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ItemUsed)
+            </td>
+            @if (!item.ItemUsed)
+            {
+                <td>
+                    <a asp-action="UseItem" asp-route-id="@item.InventoryId">Use</a>
+                </td>
+            }
+        </tr>
+}
+    </tbody>
+</table>

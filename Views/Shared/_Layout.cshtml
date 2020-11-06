@@ -27,6 +27,12 @@
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="">Users</a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Items" asp-action="">Items</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Groups" asp-action="">Groups</a>
+                            </li>
                         }
                         @if (User.IsInRole("Student") || User.IsInRole("Admin") || User.IsInRole("Mentor"))
                         {
@@ -40,7 +46,10 @@
                         @if (User.IsInRole("Student"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Wallets" asp-action="">My Wallet</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="UserInventories" asp-action="">Inventory</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Groups" asp-action="">My Group</a>
                             </li>
                         }
                     </ul>

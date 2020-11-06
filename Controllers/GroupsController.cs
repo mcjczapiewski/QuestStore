@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using QuestStore.Models;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace QuestStore.Controllers
 {
+    [Authorize]
     public class GroupsController : ApplicationBaseController
     {
         private readonly horizonp_questcredentialsContext _context;
@@ -22,6 +21,16 @@ namespace QuestStore.Controllers
         // GET: Groups
         public async Task<IActionResult> Index()
         {
+            if (User.IsInRole("Student"))
+            {
+                return RedirectToAction("Details",
+                    new
+                    {
+                        id = _context.Users
+                            .Single(i => i.CredentialsId == User.FindFirstValue(ClaimTypes.NameIdentifier)).GroupId
+                    });
+            }
+
             return View(await _context.Groups.ToListAsync());
         }
 
@@ -33,8 +42,9 @@ namespace QuestStore.Controllers
                 return NotFound();
             }
 
-            var groups = await _context.Groups
-                .FirstOrDefaultAsync(m => m.GroupId == id);
+            var groups =  _context.Users
+                .Where(i => i.GroupId == id)
+                .ToList();
             if (groups == null)
             {
                 return NotFound();
@@ -44,7 +54,7 @@ namespace QuestStore.Controllers
         }
 
         // GET: Groups/Create
-        [Authorize(Roles ="Admin, Mentor")]
+        [Authorize(Roles = "Admin, Mentor")]
         public IActionResult Create()
         {
             return View();
@@ -55,7 +65,7 @@ namespace QuestStore.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles ="Admin, Mentor")]
+        [Authorize(Roles = "Admin, Mentor")]
         public async Task<IActionResult> Create([Bind("GroupId,Name,NumberOfPpl")] Groups groups)
         {
             if (ModelState.IsValid)
@@ -64,11 +74,12 @@ namespace QuestStore.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
             return View(groups);
         }
 
         // GET: Groups/Edit/5
-        [Authorize(Roles ="Admin, Mentor")]
+        [Authorize(Roles = "Admin, Mentor")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -81,6 +92,7 @@ namespace QuestStore.Controllers
             {
                 return NotFound();
             }
+
             return View(groups);
         }
 
@@ -89,7 +101,7 @@ namespace QuestStore.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles ="Admin, Mentor")]
+        [Authorize(Roles = "Admin, Mentor")]
         public async Task<IActionResult> Edit(int id, [Bind("GroupId,Name,NumberOfPpl")] Groups groups)
         {
             if (id != groups.GroupId)
@@ -115,13 +127,15 @@ namespace QuestStore.Controllers
                         throw;
                     }
                 }
+
                 return RedirectToAction(nameof(Index));
             }
+
             return View(groups);
         }
 
         // GET: Groups/Delete/5
-        [Authorize(Roles ="Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -142,7 +156,7 @@ namespace QuestStore.Controllers
         // POST: Groups/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles ="Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var groups = await _context.Groups.FindAsync(id);

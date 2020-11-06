@@ -45,6 +45,10 @@
     </thead>
     <tbody>
 @foreach (var item in Model) {
+    if (UserManager.Users.Single(u => u.Id == item.CredentialsId).UserName == "admin")
+    {
+        continue;
+    }
         <tr>
             <td>
                 @UserManager.Users.Single(u => u.Id == item.CredentialsId).UserName

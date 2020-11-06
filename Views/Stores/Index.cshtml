@@ -4,7 +4,18 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+@if (TempData["YouArePoor"] is true)
+{
+    <h1 style="color: red" align="center">You don't have enough money for that item!</h1>
+}
+else if (TempData["ItemInInventory"] is true)
+{
+    <h3 style="color: blue" align="center">You already have that item ;-)</h3>
+}
+else if (TempData["ItemAdded"] is true)
+{
+    <h3 style="color: blue" align="center">Item added to inventory.</h3>
+}
 
 <table class="table">
     <thead>
@@ -25,27 +36,34 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NumberAvailable)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Price)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Item.Category)
-            </td>
-            <td>
-                @if (User.IsInRole("Admin") || User.IsInRole("Mentor"))
-                {
-                    <a asp-action="Edit" asp-route-id="@item.StoreItemId">Edit</a>
-                }
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NumberAvailable)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Item.Category)
+                </td>
+                <td>
+                    @if (User.IsInRole("Admin") || User.IsInRole("Mentor"))
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.StoreItemId">Edit</a>
+                    }
+                </td>
+                <td>
+                    @if (User.IsInRole("Student") && item.NumberAvailable > 0)
+                    {
+                        <a asp-action="BuyItem" asp-route-id="@item.ItemId">Buy</a>
+                    }
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

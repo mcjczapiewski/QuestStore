@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +10,8 @@ using QuestStore.Models;
 
 namespace QuestStore.Controllers
 {
-    public class ItemsController : Controller
+    [Authorize(Roles = "Admin, Mentor")]
+    public class ItemsController : ApplicationBaseController
     {
         private readonly horizonp_questcredentialsContext _context;
 
@@ -22,24 +24,6 @@ namespace QuestStore.Controllers
         public async Task<IActionResult> Index()
         {
             return View(await _context.Items.ToListAsync());
-        }
-
-        // GET: Items/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var items = await _context.Items
-                .FirstOrDefaultAsync(m => m.ItemId == id);
-            if (items == null)
-            {
-                return NotFound();
-            }
-
-            return View(items);
         }
 
         // GET: Items/Create

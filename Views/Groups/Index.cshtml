@@ -23,6 +23,10 @@
     </thead>
     <tbody>
 @foreach (var item in Model) {
+    @if (item.Name == " ")
+    {
+        continue;
+    }
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
