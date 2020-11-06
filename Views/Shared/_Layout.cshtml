@@ -40,6 +40,12 @@
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Stores" asp-action="">Shop</a>
                             </li>
                         }
+                        @if (User.IsInRole("Student"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="UserInventories" asp-action="">Inventory</a>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>
