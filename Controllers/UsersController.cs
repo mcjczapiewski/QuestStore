@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using QuestStore.Models;
+using QuestStore.ViewModels;
 
 
 namespace QuestStore.Controllers
@@ -49,8 +50,13 @@ namespace QuestStore.Controllers
             {
                 return NotFound();
             }
+            var technologies = await _context.UsersTech.ToListAsync();
+            var userDetailsModel = new UserDetails();
+            userDetailsModel.Users = users;
+            userDetailsModel.UsersTechs = technologies;
+            userDetailsModel.Technologies = _context.Technologies.ToList();
 
-            return View(users);
+            return View(userDetailsModel);
         }
 
         // GET: Users/Edit/5

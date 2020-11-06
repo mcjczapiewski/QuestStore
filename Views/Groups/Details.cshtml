@@ -1,4 +1,4 @@
-﻿@model IEnumerable<QuestStore.Models.Users>
+﻿@model Tuple<List<Users>, List<UsersTech>, List<Technologies>>
 
 @{
     ViewData["Title"] = "Details";
@@ -10,18 +10,21 @@
     <thead>
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Name)
+            Name
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Surname)
+            Surname
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Gender)
+            Gender
+        </th>
+        <th>
+            Technologies
         </th>
     </tr>
     </thead>
     <tbody>
-    @foreach (var item in Model) {
+    @foreach (Users item in Model.Item1) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
@@ -31,6 +34,16 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Gender)
+            </td>
+            <td>
+                @String.Join(", ",
+                    Model.Item3.Where(
+                        i => Model.Item2.Where(
+                            x => x.UserId == item.UserId)
+                            .Select(x => x.TechId)
+                            .ToList()
+                            .Contains(i.TechId))
+                        .Select(i => i.Name))
             </td>
         </tr>
     }
