@@ -26,5 +26,14 @@ namespace QuestStore.Controllers
                 .Where(u => u.User.Credentials.UserName == User.Identity.Name);
             return View(await horizonp_questcredentialsContext.ToListAsync());
         }
+
+        public async Task<IActionResult> UseItem(int? id)
+        {
+            var item = _context.UserInventory
+                .Single(i => i.InventoryId == id);
+            item.ItemUsed = true;
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index");
+        }
     }
 }

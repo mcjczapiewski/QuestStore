@@ -11,7 +11,7 @@ using QuestStore.Models;
 namespace QuestStore.Controllers
 {
     [Authorize(Roles = "Admin, Mentor")]
-    public class ItemsController : Controller
+    public class ItemsController : ApplicationBaseController
     {
         private readonly horizonp_questcredentialsContext _context;
 

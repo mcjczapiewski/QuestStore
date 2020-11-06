@@ -18,6 +18,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.Item.Extra)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ItemUsed)
+            </th>
         </tr>
     </thead>
     <tbody>
@@ -32,6 +35,15 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Item.Extra)
             </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ItemUsed)
+            </td>
+            @if (!item.ItemUsed)
+            {
+                <td>
+                    <a asp-action="UseItem" asp-route-id="@item.InventoryId">Use</a>
+                </td>
+            }
         </tr>
 }
     </tbody>
