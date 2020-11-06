@@ -51,8 +51,10 @@ namespace QuestStore.Controllers
                 .Where(i => i.GroupId == id)
                 .ToListAsync();
             var technologies = await _context.UsersTech.ToListAsync();
-            var tupleModel = new Tuple<List<Users>, List<UsersTech>, List<Technologies>>
-                (groupMembers, technologies, _context.Technologies.ToList());
+            var group = await _context.Groups
+                .SingleAsync(i => i.GroupId == id);
+            var tupleModel = new Tuple<List<Users>, List<UsersTech>, List<Technologies>, Groups>
+                (groupMembers, technologies, _context.Technologies.ToList(), group);
 
             return View(tupleModel);
         }
@@ -172,6 +174,32 @@ namespace QuestStore.Controllers
         private bool GroupsExists(int id)
         {
             return _context.Groups.Any(e => e.GroupId == id);
+        }
+
+        public async Task<IActionResult> Deposit(int GroupId, decimal AddMoney)
+        {
+            try
+            {
+                var userWallet = _context.Wallet
+                    .Single(i => i.UserId == _context.Users.Single(i => i.CredentialsId == User.FindFirstValue(ClaimTypes.NameIdentifier)).UserId);
+                var groupUpdate = _context.Groups
+                    .Single(i => i.GroupId == GroupId);
+                userWallet.Balance -= AddMoney;
+                groupUpdate.GroupBank += AddMoney;
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!GroupsExists(GroupId))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return RedirectToAction(nameof(Index));
         }
     }
 }

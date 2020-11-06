@@ -312,6 +312,8 @@ namespace QuestStore.Models
 
                 entity.Property(e => e.GroupId).HasColumnType("int(11)");
 
+                entity.Property(e => e.GroupBank).HasColumnType("decimal(10,2)");
+
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasColumnType("varchar(50)")
