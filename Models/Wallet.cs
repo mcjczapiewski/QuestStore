@@ -7,7 +7,7 @@ namespace QuestStore.Models
     {
         public int WalletId { get; set; }
         public int UserId { get; set; }
-        public double? Balance { get; set; }
+        public decimal? Balance { get; set; }
 
         public virtual Users User { get; set; }
     }

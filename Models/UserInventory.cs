@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace QuestStore.Models
 {
@@ -8,6 +9,7 @@ namespace QuestStore.Models
         public int InventoryId { get; set; }
         public int UserId { get; set; }
         public int ItemId { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public bool ItemUsed { get; set; }
 
         public virtual Items Item { get; set; }

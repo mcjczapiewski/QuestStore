@@ -626,7 +626,7 @@ namespace QuestStore.Models
 
                 entity.Property(e => e.WalletId).HasColumnType("int(10)");
 
-                entity.Property(e => e.Balance).HasColumnType("double(10,2)");
+                entity.Property(e => e.Balance).HasColumnType("decimal(10,2)");
 
                 entity.Property(e => e.UserId).HasColumnType("int(10)");
 
