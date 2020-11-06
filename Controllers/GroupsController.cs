@@ -1,9 +1,14 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Dynamic;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QuestStore.Models;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace QuestStore.Controllers
@@ -42,15 +47,14 @@ namespace QuestStore.Controllers
                 return NotFound();
             }
 
-            var groups =  _context.Users
+            var groupMembers = await _context.Users
                 .Where(i => i.GroupId == id)
-                .ToList();
-            if (groups == null)
-            {
-                return NotFound();
-            }
+                .ToListAsync();
+            var technologies = await _context.UsersTech.ToListAsync();
+            var tupleModel = new Tuple<List<Users>, List<UsersTech>, List<Technologies>>
+                (groupMembers, technologies, _context.Technologies.ToList());
 
-            return View(groups);
+            return View(tupleModel);
         }
 
         // GET: Groups/Create
