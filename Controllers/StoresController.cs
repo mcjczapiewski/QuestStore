@@ -10,6 +10,7 @@ using QuestStore.Models;
 
 namespace QuestStore.Controllers
 {
+    [Authorize]
     public class StoresController : ApplicationBaseController
     {
         private readonly horizonp_questcredentialsContext _context;
@@ -62,7 +63,9 @@ namespace QuestStore.Controllers
             {
                 try
                 {
-                    _context.Update(store);
+                    var ItemToUpdate = _context.Store.FirstOrDefault(i => i.StoreItemId == id);
+                    ItemToUpdate.Price = store.Price;
+                    ItemToUpdate.NumberAvailable = store.NumberAvailable;
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)

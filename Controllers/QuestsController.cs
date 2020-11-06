@@ -15,6 +15,7 @@ using QuestStore.ViewModels;
 
 namespace QuestStore.Controllers
 {
+    [Authorize]
     public class QuestsController : ApplicationBaseController
     {
         private readonly horizonp_questcredentialsContext _context;
