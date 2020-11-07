@@ -23,7 +23,7 @@
                 Login
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Name)
+                @Html.ActionLink("Name", "Index", new { sortOrder = ViewBag.NameSortParm })
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Surname)
@@ -35,7 +35,7 @@
                 @Html.DisplayNameFor(model => model.Age)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Mentor)
+                @Html.ActionLink("Mentor", "Index", new { sortOrder = ViewBag.MentorSortParm })
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Group)

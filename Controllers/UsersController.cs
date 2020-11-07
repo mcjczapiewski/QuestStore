@@ -22,15 +22,33 @@ namespace QuestStore.Controllers
         {
             _context = context;
         }
-
+  
         // GET: Users
-        public async Task<IActionResult> Index(string searchString)
+        public async Task<IActionResult> Index(string sortOrder, string searchString)
         {
+            ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "Name_Desc" : "";
+            ViewBag.MentorSortParm = String.IsNullOrEmpty(sortOrder) ? "Title_Desc" : "";
+
             var horizonp_questcredentialsContext = from h in _context.Users.Include(u => u.Group)
                                                    select h;
             if (!String.IsNullOrEmpty(searchString))
             {
-                horizonp_questcredentialsContext = horizonp_questcredentialsContext.Where(s => s.Surname.Contains(searchString) || s.Name.Contains(searchString) || (s.Name + " " + s.Surname).Contains(searchString));
+                horizonp_questcredentialsContext = horizonp_questcredentialsContext
+                                .Where(s => s.Surname.Contains(searchString) || s.Name
+                                .Contains(searchString) || (s.Name + " " + s.Surname)
+                                .Contains(searchString));
+            }
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    horizonp_questcredentialsContext = horizonp_questcredentialsContext.OrderByDescending(h => h.Name);
+                    break;
+                case "Title_Desc":
+                    horizonp_questcredentialsContext = horizonp_questcredentialsContext.OrderByDescending(h => h.Mentor);
+                    break;
+                default:
+                    horizonp_questcredentialsContext = horizonp_questcredentialsContext.OrderBy(h => h.Surname);
+                    break;
             }
             return View(await horizonp_questcredentialsContext.ToListAsync());
         }

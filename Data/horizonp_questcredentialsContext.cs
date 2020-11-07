@@ -384,7 +384,7 @@ namespace QuestStore.Models
                     .HasCollation("utf8_general_ci");
 
                 entity.Property(e => e.Name)
-                    .HasColumnType("varchar(50)")
+                    .HasColumnType("varchar(150)")
                     .HasCharSet("utf8")
                     .HasCollation("utf8_general_ci");
             });
