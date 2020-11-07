@@ -28,6 +28,7 @@ namespace QuestStore.Models
         public virtual DbSet<EfmigrationsHistory> EfmigrationsHistory { get; set; }
         public virtual DbSet<Groups> Groups { get; set; }
         public virtual DbSet<GroupsQuests> GroupsQuests { get; set; }
+        public virtual DbSet<GroupsInventory> GroupsInventory { get; set; }
         public virtual DbSet<Items> Items { get; set; }
         public virtual DbSet<Quests> Quests { get; set; }
         public virtual DbSet<Store> Store { get; set; }
