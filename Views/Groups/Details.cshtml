@@ -1,8 +1,10 @@
-﻿@model Tuple<List<Users>, List<UsersTech>, List<Technologies>, Groups>
+﻿@model Tuple<List<Users>, List<UsersTech>, List<Technologies>, Groups, List<GroupsInventory>, List<Items>>
 
 @{
     ViewData["Title"] = "Details";
 }
+
+<h1>@Model.Item4.Name</h1>
 
 @if (User.IsInRole("Student"))
 {
@@ -29,46 +31,86 @@
 
 <table class="table">
     <thead>
-        <tr>
-            <th>
-                Name
-            </th>
-            <th>
-                Surname
-            </th>
-            <th>
-                Gender
-            </th>
-            <th>
-                Technologies
-            </th>
-        </tr>
+    <tr>
+        <th>
+            Name
+        </th>
+        <th>
+            Surname
+        </th>
+        <th>
+            Gender
+        </th>
+        <th>
+            Technologies
+        </th>
+    </tr>
     </thead>
     <tbody>
-        @foreach (Users item in Model.Item1)
-        {
-            <tr>
+    @foreach (Users item in Model.Item1)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Surname)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Gender)
+            </td>
+            <td>
+                @String.Join(", ",
+                    Model.Item3.Where(
+                        i => Model.Item2.Where(
+                            x => x.UserId == item.UserId)
+                            .Select(x => x.TechId)
+                            .ToList()
+                            .Contains(i.TechId))
+                        .Select(i => i.Name))
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<h3>Group inventory</h3>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>
+            Name
+        </th>
+        <th>
+            Category
+        </th>
+        <th>
+            ItemUsed
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (GroupsInventory item in Model.Item5)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => Model.Item6.Single(i => i.ItemId == item.ItemId).Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => Model.Item6.Single(i => i.ItemId == item.ItemId).Category)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ItemUsed)
+            </td>
+            @if (!item.ItemUsed)
+            {
                 <td>
-                    @Html.DisplayFor(modelItem => item.Name)
+                    <a asp-action="UseItem" asp-route-id="@item.InventoryId">Use</a>
                 </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Surname)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Gender)
-                </td>
-                <td>
-                    @String.Join(", ",
-                        Model.Item3.Where(
-                            i => Model.Item2.Where(
-                                x => x.UserId == item.UserId)
-                                .Select(x => x.TechId)
-                                .ToList()
-                                .Contains(i.TechId))
-                            .Select(i => i.Name))
-                </td>
-            </tr>
-        }
+            }
+        </tr>
+    }
     </tbody>
 </table>
 @if (!User.IsInRole("Student"))

@@ -53,8 +53,14 @@ namespace QuestStore.Controllers
             var technologies = await _context.UsersTech.ToListAsync();
             var group = await _context.Groups
                 .SingleAsync(i => i.GroupId == id);
-            var tupleModel = new Tuple<List<Users>, List<UsersTech>, List<Technologies>, Groups>
-                (groupMembers, technologies, _context.Technologies.ToList(), group);
+            var groupInventory = await _context.GroupsInventory
+                .Where(i => i.GroupId == id)
+                .ToListAsync();
+            var itemsInGroupInventory = await _context.Items
+                .Where(i => groupInventory.Select(x => x.ItemId).ToList().Contains(i.ItemId))
+                .ToListAsync();
+            var tupleModel = new Tuple<List<Users>, List<UsersTech>, List<Technologies>, Groups, List<GroupsInventory>, List<Items>>
+                (groupMembers, technologies, _context.Technologies.ToList(), group, groupInventory, itemsInGroupInventory);
 
             return View(tupleModel);
         }
@@ -200,6 +206,15 @@ namespace QuestStore.Controllers
                 }
             }
             return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> UseItem(int? id)
+        {
+            var item = _context.GroupsInventory
+                .Single(i => i.InventoryId == id);
+            item.ItemUsed = true;
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index");
         }
     }
 }
