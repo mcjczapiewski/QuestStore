@@ -55,7 +55,8 @@
                     @if (User.IsInRole("Student"))
                     {
                         @: | 
-                        <a asp-action="SignOn" asp-route-id="@item.QuestId">Sign On</a>
+                        <a asp-action="SignOn" asp-route-id="@item.QuestId">Sign On | </a>
+                        <a asp-action="GroupSignOn" asp-route-id="@item.QuestId">Group Sign On</a>
                     }
                     @if (User.IsInRole("Admin") || User.IsInRole("Mentor"))
                     {

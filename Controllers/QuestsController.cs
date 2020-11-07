@@ -43,6 +43,7 @@ namespace QuestStore.Controllers
                 .ToListAsync();
             return View(quests);
         }
+
         [Authorize(Roles = "Student")]
         public async Task<IActionResult> SignOn(int? id)
         {
@@ -78,6 +79,44 @@ namespace QuestStore.Controllers
                 await _context.SaveChangesAsync();
             }
             return View();
+        }
+
+        [Authorize(Roles = "Student")]
+        public async Task<IActionResult> GroupSignOn(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var quests = await _context.Quests
+                .FirstOrDefaultAsync(m => m.QuestId == id);
+            if (quests == null)
+            {
+                return NotFound();
+            }
+
+            var groupId = _context.Groups
+                .Where(i => i.GroupId == _context.Users
+                    .Single(x => x.CredentialsId == User.FindFirstValue(ClaimTypes.NameIdentifier)).GroupId)
+                .Select(uid => uid.GroupId)
+                .Single();
+            ViewData["QuestTitle"] = quests.Title;
+            if (_context.GroupsQuests.Any(o => o.QuestId == quests.QuestId && o.GroupId == groupId))
+            {
+                ViewData["Exists"] = true;
+                return View(nameof(SignOn));
+            }
+            GroupsQuests groupsQuests = new GroupsQuests();
+            groupsQuests.GroupId = groupId;
+            groupsQuests.QuestId = quests.QuestId;
+            groupsQuests.Status = "In progress";
+            if (ModelState.IsValid)
+            {
+                _context.Add(groupsQuests);
+                await _context.SaveChangesAsync();
+            }
+            return View(nameof(SignOn));
         }
 
         [Authorize(Roles = "Student")]

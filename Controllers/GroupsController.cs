@@ -59,8 +59,18 @@ namespace QuestStore.Controllers
             var itemsInGroupInventory = await _context.Items
                 .Where(i => groupInventory.Select(x => x.ItemId).ToList().Contains(i.ItemId))
                 .ToListAsync();
-            var tupleModel = new Tuple<List<Users>, List<UsersTech>, List<Technologies>, Groups, List<GroupsInventory>, List<Items>>
-                (groupMembers, technologies, _context.Technologies.ToList(), group, groupInventory, itemsInGroupInventory);
+            var groupQuests = await _context.GroupsQuests
+                .Where(i => i.GroupId == id)
+                .ToListAsync();
+            var questsGroupIsAt = await _context.Quests
+                .Where(i => groupQuests.Select(x => x.QuestId).ToList().Contains(i.QuestId))
+                .ToListAsync();
+            var secondTuple = new Tuple<List<Quests>>(questsGroupIsAt);
+            var tupleModel =
+                new Tuple<List<Users>, List<UsersTech>, List<Technologies>, Groups, List<GroupsInventory>, List<Items>,
+                    List<GroupsQuests>, Tuple<List<Quests>>>
+                (groupMembers, technologies, _context.Technologies.ToList(), group, groupInventory,
+                itemsInGroupInventory, groupQuests, secondTuple);
 
             return View(tupleModel);
         }
@@ -215,6 +225,16 @@ namespace QuestStore.Controllers
             item.ItemUsed = true;
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");
+        }
+
+        [Authorize(Roles = "Student")]
+        public async Task<IActionResult> GiveUp(int? id)
+        {
+            var abandonedQuest = _context.GroupsQuests
+                .Single(i => i.QuestId == id);
+            _context.GroupsQuests.Remove(abandonedQuest);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
     }
 }

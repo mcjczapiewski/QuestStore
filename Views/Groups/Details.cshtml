@@ -1,4 +1,4 @@
-﻿@model Tuple<List<Users>, List<UsersTech>, List<Technologies>, Groups, List<GroupsInventory>, List<Items>>
+﻿@model Tuple<List<Users>, List<UsersTech>, List<Technologies>, Groups, List<GroupsInventory>, List<Items>, List<GroupsQuests>, Tuple<List<Quests>>>
 
 @{
     ViewData["Title"] = "Details";
@@ -107,6 +107,52 @@
             {
                 <td>
                     <a asp-action="UseItem" asp-route-id="@item.InventoryId">Use</a>
+                </td>
+            }
+        </tr>
+    }
+    </tbody>
+</table>
+
+<h3>Group quests</h3>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>
+            Title
+        </th>
+        <th>
+            Reward
+        </th>
+        <th>
+            Description
+        </th>
+        <th>
+            Extra
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (GroupsQuests item in Model.Item7)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => Model.Rest.Item1.Single(i => i.QuestId == item.QuestId).Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => Model.Rest.Item1.Single(i => i.QuestId == item.QuestId).Reward)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => Model.Rest.Item1.Single(i => i.QuestId == item.QuestId).Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => Model.Rest.Item1.Single(i => i.QuestId == item.QuestId).Extra)
+            </td>
+            @if (User.IsInRole("Student"))
+            {
+                <td>
+                    <a asp-action="GiveUp" asp-route-id="@item.QuestId">Give up...</a>
                 </td>
             }
         </tr>
