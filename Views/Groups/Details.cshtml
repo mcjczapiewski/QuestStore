@@ -1,55 +1,77 @@
-﻿@model Tuple<List<Users>, List<UsersTech>, List<Technologies>>
+﻿@model Tuple<List<Users>, List<UsersTech>, List<Technologies>, Groups>
 
 @{
     ViewData["Title"] = "Details";
 }
 
-<h1>Group members</h1>
+@if (User.IsInRole("Student"))
+{
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="Deposit">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label>Current Group Bank balance: @Model.Item4.GroupBank</label>
+                    <label for="AddMoney">Input how much you want to deposit</label>
+                    <input type="number" id="AddMoney" name="AddMoney" min="1" step="any" />
+                    <span asp-validation-for="Item4.GroupBank" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="hidden" name="GroupId" value="@Model.Item4.GroupId"/>
+                    <input type="submit" value="Deposit" class="btn btn-primary"/>
+                </div>
+            </form>
+        </div>
+    </div>
+}
+
+<h3>Group members</h3>
 
 <table class="table">
     <thead>
-    <tr>
-        <th>
-            Name
-        </th>
-        <th>
-            Surname
-        </th>
-        <th>
-            Gender
-        </th>
-        <th>
-            Technologies
-        </th>
-    </tr>
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                Surname
+            </th>
+            <th>
+                Gender
+            </th>
+            <th>
+                Technologies
+            </th>
+        </tr>
     </thead>
     <tbody>
-    @foreach (Users item in Model.Item1) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Surname)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Gender)
-            </td>
-            <td>
-                @String.Join(", ",
-                    Model.Item3.Where(
-                        i => Model.Item2.Where(
-                            x => x.UserId == item.UserId)
-                            .Select(x => x.TechId)
-                            .ToList()
-                            .Contains(i.TechId))
-                        .Select(i => i.Name))
-            </td>
-        </tr>
-    }
+        @foreach (Users item in Model.Item1)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Surname)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Gender)
+                </td>
+                <td>
+                    @String.Join(", ",
+                        Model.Item3.Where(
+                            i => Model.Item2.Where(
+                                x => x.UserId == item.UserId)
+                                .Select(x => x.TechId)
+                                .ToList()
+                                .Contains(i.TechId))
+                            .Select(i => i.Name))
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
-@if(!User.IsInRole("Student"))
+@if (!User.IsInRole("Student"))
 {
     <div>
         <a asp-action="Index">Back to List</a>

@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using QuestStore.Data;
+using QuestStore.Models;
+using System.Security.Claims;
 
 namespace QuestStore.Areas.Identity.Pages.Account
 {
@@ -21,14 +23,17 @@ namespace QuestStore.Areas.Identity.Pages.Account
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly horizonp_questcredentialsContext _context;
 
         public LoginModel(SignInManager<IdentityUser> signInManager, 
             ILogger<LoginModel> logger,
-            UserManager<IdentityUser> userManager)
+            UserManager<IdentityUser> userManager,
+            horizonp_questcredentialsContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
+            _context = context;
         }
 
         [BindProperty]
@@ -82,7 +87,19 @@ namespace QuestStore.Areas.Identity.Pages.Account
                 var result = await _signInManager.PasswordSignInAsync(Input.Login, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation("User logged in.");
+                    //_logger.LogInformation("User logged in.");
+
+                    //var userId = _userManager.GetUserId(User);
+                    //Users loggedUser = _context.Users.FirstOrDefault(u => u.CredentialsId == userId);
+
+                    //TempData["FillData"] = false;
+
+                    //if (loggedUser.Name == null || loggedUser.Surname == null)
+                    //{
+                    //    TempData["FillData"] = true;
+                    //    return LocalRedirect("/Identity/Account/Manage/Index");
+                    //}
+
                     return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)
