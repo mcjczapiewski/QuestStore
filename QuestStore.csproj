@@ -26,4 +26,10 @@
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="3.2.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Models\Database.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
+  </ItemGroup>
+
 </Project>

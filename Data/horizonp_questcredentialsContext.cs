@@ -497,7 +497,7 @@ namespace QuestStore.Models
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("user_ID");
             });
-
+            
             modelBuilder.Entity<Users>(entity =>
             {
                 entity.HasKey(e => e.UserId)
