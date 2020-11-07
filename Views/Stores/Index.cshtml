@@ -6,15 +6,20 @@
 
 @if (TempData["YouArePoor"] is true)
 {
-    <h1 style="color: red" align="center">You don't have enough money for that item!</h1>
+    <h1 style="color: red" align="center">Not enough money!</h1>
 }
 else if (TempData["ItemInInventory"] is true)
 {
-    <h3 style="color: blue" align="center">You already have that item ;-)</h3>
+    <h3 style="color: blue" align="center">Item already in inventory ;-)</h3>
 }
 else if (TempData["ItemAdded"] is true)
 {
     <h3 style="color: blue" align="center">Item added to inventory.</h3>
+}
+@if (User.IsInRole("Student"))
+{
+    <h2>ACHTUNG! Basic items are meant for students. Magic items are for groups!</h2>
+    <h4>If you buy a magic item, it goes to Group Inventory and for Group Bank money.<br/>We suggest discussing it with your group beforehand.</h4>
 }
 
 <table class="table">

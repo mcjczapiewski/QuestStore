@@ -46,49 +46,101 @@ namespace QuestStore.Controllers
             TempData["ItemInInventory"] = false;
             TempData["YouArePoor"] = false;
 
-            var userId = _context.Users
-                .Where(i => i.CredentialsId == User.FindFirstValue(ClaimTypes.NameIdentifier))
-                .Select(uid => uid.UserId)
-                .Single();
+            var loggedUser = _context.Users
+                .Single(i => i.CredentialsId == User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var userId = loggedUser.UserId;
+            var groupId = loggedUser.GroupId;
+
             var itemExists = false;
 
-            if (_context.UserInventory.Any(o => o.ItemId == itemToBuy.ItemId && o.UserId == userId))
+            if (itemToBuy.Category == "Magic")
             {
-                if (!_context.UserInventory.Single(i => i.ItemId == id).ItemUsed)
+                if (_context.GroupsInventory.Any(o => o.ItemId == itemToBuy.ItemId && o.GroupId == groupId))
                 {
-                    TempData["ItemInInventory"] = true;
-                    return RedirectToAction("Index");
+                    if (!_context.GroupsInventory.Single(i => i.ItemId == id).ItemUsed)
+                    {
+                        TempData["ItemInInventory"] = true;
+                        return RedirectToAction("Index");
+                    }
+                    itemExists = true;
                 }
-                itemExists = true;
             }
-            var userBalance = _context.Wallet
-                .Single(i => i.UserId == userId);
-            var itemInStore = _context.Store
-                .Single(i => i.ItemId == itemToBuy.ItemId);
-            if (userBalance.Balance < itemInStore.Price)
+            else
             {
-                TempData["YouArePoor"] = true;
-                return RedirectToAction("Index");
+                if (_context.UserInventory.Any(o => o.ItemId == itemToBuy.ItemId && o.UserId == userId))
+                {
+                    if (!_context.UserInventory.Single(i => i.ItemId == id).ItemUsed)
+                    {
+                        TempData["ItemInInventory"] = true;
+                        return RedirectToAction("Index");
+                    }
+                    itemExists = true;
+                }
             }
 
+            var userBalance = _context.Wallet
+                .Single(i => i.UserId == userId);
+            var group = _context.Groups
+                .Single(i => i.GroupId == groupId);
+            var groupBalance = group.GroupBank;
+            var itemInStore = _context.Store
+                .Single(i => i.ItemId == itemToBuy.ItemId);
+            
+            GroupsInventory groupsInventory = new GroupsInventory();
             UserInventory userInventory = new UserInventory();
-            userInventory.UserId = userId;
-            userInventory.ItemId = itemToBuy.ItemId;
+
+            if (itemToBuy.Category == "Magic")
+            {
+                if (groupBalance < itemInStore.Price)
+                {
+                    TempData["YouArePoor"] = true;
+                    return RedirectToAction("Index");
+                }
+                groupsInventory.GroupId = groupId;
+                groupsInventory.ItemId = itemToBuy.ItemId;
+            }
+            else
+            {
+                if (userBalance.Balance < itemInStore.Price)
+                {
+                    TempData["YouArePoor"] = true;
+                    return RedirectToAction("Index");
+                }
+                userInventory.UserId = userId;
+                userInventory.ItemId = itemToBuy.ItemId;
+            }
 
             if (ModelState.IsValid)
             {
-                var updatedBalance = userBalance.Balance - itemToBuy.Store.Price;
-                userBalance.Balance = updatedBalance;
-                itemInStore.NumberAvailable -= 1;
-                if (!itemExists)
+                if (itemToBuy.Category == "Magic")
                 {
-                    _context.Add(userInventory);
+                    var updatedBalance = group.GroupBank - itemToBuy.Store.Price;
+                    group.GroupBank = updatedBalance;
+                    if (!itemExists)
+                    {
+                        _context.Add(groupsInventory);
+                    }
+                    else
+                    {
+                        _context.GroupsInventory
+                            .Single(i => i.ItemId == itemToBuy.ItemId && i.GroupId == groupId).ItemUsed = false;
+                    }
                 }
                 else
                 {
-                    _context.UserInventory
-                        .Single(i => i.ItemId == itemToBuy.ItemId && i.UserId == userId).ItemUsed = false;
+                    var updatedBalance = userBalance.Balance - itemToBuy.Store.Price;
+                    userBalance.Balance = updatedBalance;
+                    if (!itemExists)
+                    {
+                        _context.Add(userInventory);
+                    }
+                    else
+                    {
+                        _context.UserInventory
+                            .Single(i => i.ItemId == itemToBuy.ItemId && i.UserId == userId).ItemUsed = false;
+                    }
                 }
+                itemInStore.NumberAvailable -= 1;
                 await _context.SaveChangesAsync();
             }
             TempData["ItemAdded"] = true;
