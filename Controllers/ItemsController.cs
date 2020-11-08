@@ -21,9 +21,26 @@ namespace QuestStore.Controllers
         }
 
         // GET: Items
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrder)
         {
-            return View(await _context.Items.ToListAsync());
+            ViewBag.CategorySortParm = String.IsNullOrEmpty(sortOrder) ? "Cat_Desc" : "";
+            ViewBag.ExtraSortParm = String.IsNullOrEmpty(sortOrder) ? "Ex_Desc" : "";
+
+            var horizonp_questcredentialsContext = from h in _context.Items select h;
+
+            switch (sortOrder)
+            {
+                case "Cat_Desc":
+                    horizonp_questcredentialsContext = horizonp_questcredentialsContext.OrderByDescending(h => h.Category);
+                    break;
+                case "Ex_Desc":
+                    horizonp_questcredentialsContext = horizonp_questcredentialsContext.OrderByDescending(h => h.Extra);
+                    break;
+                default:
+                    horizonp_questcredentialsContext = horizonp_questcredentialsContext.OrderBy(h => h.Extra);
+                    break;
+            }
+            return View(await horizonp_questcredentialsContext.ToListAsync());
         }
 
         // GET: Items/Create

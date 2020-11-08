@@ -24,7 +24,7 @@ namespace QuestStore.Controllers
         }
   
         // GET: Users
-        public async Task<ViewResult> IndexAsync(string sortOrder, string searchString)
+        public async Task<IActionResult> Index(string sortOrder, string searchString)
         {
             ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "Name_Desc" : "";
             ViewBag.MentorSortParm = String.IsNullOrEmpty(sortOrder) ? "Title_Desc" : "";
@@ -135,7 +135,7 @@ namespace QuestStore.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(IndexAsync));
+                return RedirectToAction(nameof(Index));
             }
             ViewData["GroupId"] = new SelectList(_context.Groups, "GroupId", "Name", users.GroupId);
             return View(users);
@@ -170,7 +170,7 @@ namespace QuestStore.Controllers
             var users = await _context.Users.FindAsync(id);
             _context.Users.Remove(users);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(IndexAsync));
+            return RedirectToAction(nameof(Index));
         }
 
         private bool UsersExists(int id)
