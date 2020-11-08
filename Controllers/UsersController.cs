@@ -48,7 +48,7 @@ namespace QuestStore.Controllers
                     horizonp_questcredentialsContext = horizonp_questcredentialsContext.OrderByDescending(h => h.Mentor);
                     break;
                 default:
-                    horizonp_questcredentialsContext = horizonp_questcredentialsContext.OrderBy(h => h.Mentor);
+                    horizonp_questcredentialsContext = horizonp_questcredentialsContext.OrderBy(h => h.Name);
                     break;
             }
             return View(await horizonp_questcredentialsContext.ToListAsync());
