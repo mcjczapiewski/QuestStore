@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Details";
+    ViewData["ShowButtons"] = false;
 }
 
 <h1>Details</h1>
@@ -61,6 +62,37 @@
         </dd>
     </dl>
 </div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayName("Title")
+            </th>
+            <th>
+                @Html.DisplayName("Reward")
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Quests)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Reward)
+                </td>
+                <td>
+                    <a asp-action="Reward" asp-route-id="@item.QuestId">Reward</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
 <div>
     <a asp-action="Edit" asp-route-id="@Model.Users.UserId">Edit</a> |
     <a asp-action="Index">Back to List</a>

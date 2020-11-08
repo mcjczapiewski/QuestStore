@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -68,17 +69,24 @@ namespace QuestStore.Controllers
             {
                 return NotFound();
             }
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var quests = await _context.Users
+                .Where(i => i.CredentialsId == userId)
+                .SelectMany(q => q.UsersQuests)
+                .Select(qs => qs.Quest)
+                .ToListAsync();
+
             var technologies = await _context.UsersTech.ToListAsync();
             var userDetailsModel = new UserDetails();
             userDetailsModel.Users = users;
             userDetailsModel.UsersTechs = technologies;
             userDetailsModel.Technologies = _context.Technologies.ToList();
+            userDetailsModel.Quests = quests;
 
             return View(userDetailsModel);
         }
 
         // GET: Users/Edit/5
-        [Authorize(Roles = "Admin, Mentor")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -100,7 +108,6 @@ namespace QuestStore.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin, Mentor")]
         public async Task<IActionResult> Edit(int id, [Bind("UserId,Gender,Age,Mentor,GroupId,Name,Surname")] Users users)
         {
             if (id != users.UserId)
@@ -176,6 +183,19 @@ namespace QuestStore.Controllers
         private bool UsersExists(int id)
         {
             return _context.Users.Any(e => e.UserId == id);
+        }
+
+        public async Task<IActionResult> Reward(int? id)
+        {
+            var userWallet = _context.Wallet
+                .Single(i => i.UserId == _context.Users.Single(i => i.CredentialsId == User.FindFirstValue(ClaimTypes.NameIdentifier)).UserId);
+            var questReward = _context.Quests
+                .Single(i => i.QuestId == id).Reward;
+            userWallet.Balance += questReward;
+            var thisUserQuest = await _context.UsersQuests
+                .SingleAsync(i => i.QuestId == id);
+            thisUserQuest.Status = "Rewarded";
+            return RedirectToAction(nameof(Details));
         }
     }
 }
