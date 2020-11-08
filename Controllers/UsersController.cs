@@ -24,7 +24,7 @@ namespace QuestStore.Controllers
         }
   
         // GET: Users
-        public async Task<IActionResult> Index(string sortOrder, string searchString)
+        public async Task<ViewResult> IndexAsync(string sortOrder, string searchString)
         {
             ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "Name_Desc" : "";
             ViewBag.MentorSortParm = String.IsNullOrEmpty(sortOrder) ? "Title_Desc" : "";
@@ -40,14 +40,14 @@ namespace QuestStore.Controllers
             }
             switch (sortOrder)
             {
-                case "name_desc":
+                case "Name_Desc":
                     horizonp_questcredentialsContext = horizonp_questcredentialsContext.OrderByDescending(h => h.Name);
                     break;
                 case "Title_Desc":
                     horizonp_questcredentialsContext = horizonp_questcredentialsContext.OrderByDescending(h => h.Mentor);
                     break;
                 default:
-                    horizonp_questcredentialsContext = horizonp_questcredentialsContext.OrderBy(h => h.Surname);
+                    horizonp_questcredentialsContext = horizonp_questcredentialsContext.OrderBy(h => h.Mentor);
                     break;
             }
             return View(await horizonp_questcredentialsContext.ToListAsync());
@@ -135,7 +135,7 @@ namespace QuestStore.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(IndexAsync));
             }
             ViewData["GroupId"] = new SelectList(_context.Groups, "GroupId", "Name", users.GroupId);
             return View(users);
@@ -170,7 +170,7 @@ namespace QuestStore.Controllers
             var users = await _context.Users.FindAsync(id);
             _context.Users.Remove(users);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(IndexAsync));
         }
 
         private bool UsersExists(int id)
