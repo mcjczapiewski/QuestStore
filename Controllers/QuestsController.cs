@@ -41,6 +41,10 @@ namespace QuestStore.Controllers
                 .SelectMany(q => q.UsersQuests)
                 .Select(qs => qs.Quest)
                 .ToListAsync();
+            var questsStatus = await _context.UsersQuests
+                .Where(i => i.UserId == _context.Users.First(x => x.CredentialsId == userId).UserId)
+                .ToListAsync();
+            ViewData["userQuests"] = questsStatus;
             return View(quests);
         }
 
@@ -120,11 +124,21 @@ namespace QuestStore.Controllers
         }
 
         [Authorize(Roles = "Student")]
-        public async Task<IActionResult> GiveUp(int? id)
+        public async Task<IActionResult> GiveUp(int? id, string? name)
         {
             var abandonedQuest = _context.UsersQuests
-                .Single(i => i.QuestId == id);
+                .Single(i => i.QuestId == id && i.UserId == _context.Users.Single(x => x.CredentialsId == _context.AspNetUsers.Single(w => w.UserName == name).Id).UserId);
             _context.UsersQuests.Remove(abandonedQuest);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(MyQuests));
+        }
+
+        [Authorize(Roles = "Student")]
+        public async Task<IActionResult> MarkCompleted(int? id, string? name)
+        {
+            var completeQuest = _context.UsersQuests
+                .Single(i => i.QuestId == id && i.UserId == _context.Users.Single(x => x.CredentialsId == _context.AspNetUsers.Single(w => w.UserName == name).Id).UserId);
+            completeQuest.Status = "Completed";
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(MyQuests));
         }

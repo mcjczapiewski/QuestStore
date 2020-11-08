@@ -72,6 +72,9 @@
             <th>
                 @Html.DisplayName("Reward")
             </th>
+            <th>
+                @Html.DisplayName("Status")
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -86,8 +89,14 @@
                     @Html.DisplayFor(modelItem => item.Reward)
                 </td>
                 <td>
-                    <a asp-action="Reward" asp-route-id="@item.QuestId">Reward</a>
+                    @Html.DisplayFor(modelItem => Model.UsersQuests.Single(i => i.QuestId == item.QuestId).Status)
                 </td>
+                @if (Model.UsersQuests.Single(i => i.QuestId == item.QuestId).Status == "Completed")
+                {
+                    <td>
+                        <a asp-action="Reward" asp-route-id="@item.QuestId" asp-route-userId ="@Model.Users.UserId">Reward</a>
+                    </td>
+                }
             </tr>
         }
     </tbody>

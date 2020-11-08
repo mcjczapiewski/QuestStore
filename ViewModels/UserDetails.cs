@@ -12,5 +12,6 @@ namespace QuestStore.ViewModels
         public List<UsersTech> UsersTechs { get; set; }
         public List<Technologies> Technologies { get; set; }
         public List<Quests> Quests { get; set; }
+        public List<UsersQuests> UsersQuests { get; set; }
     }
 }

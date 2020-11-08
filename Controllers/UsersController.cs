@@ -70,10 +70,12 @@ namespace QuestStore.Controllers
                 return NotFound();
             }
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var quests = await _context.Users
-                .Where(i => i.CredentialsId == userId)
-                .SelectMany(q => q.UsersQuests)
-                .Select(qs => qs.Quest)
+            var userQuests = _context.UsersQuests
+                .Where(i => i.UserId == users.UserId)
+                .ToList();
+            var quests = await _context.Quests
+                .Where(i => userQuests
+                    .Select(i => i.QuestId).Contains(i.QuestId))
                 .ToListAsync();
 
             var technologies = await _context.UsersTech.ToListAsync();
@@ -82,6 +84,7 @@ namespace QuestStore.Controllers
             userDetailsModel.UsersTechs = technologies;
             userDetailsModel.Technologies = _context.Technologies.ToList();
             userDetailsModel.Quests = quests;
+            userDetailsModel.UsersQuests = userQuests;
 
             return View(userDetailsModel);
         }
@@ -185,17 +188,18 @@ namespace QuestStore.Controllers
             return _context.Users.Any(e => e.UserId == id);
         }
 
-        public async Task<IActionResult> Reward(int? id)
+        public async Task<IActionResult> Reward(int? id, int? userId)
         {
             var userWallet = _context.Wallet
-                .Single(i => i.UserId == _context.Users.Single(i => i.CredentialsId == User.FindFirstValue(ClaimTypes.NameIdentifier)).UserId);
+                .Single(i => i.UserId == userId);
             var questReward = _context.Quests
                 .Single(i => i.QuestId == id).Reward;
             userWallet.Balance += questReward;
-            var thisUserQuest = await _context.UsersQuests
-                .SingleAsync(i => i.QuestId == id);
+            var thisUserQuest = _context.UsersQuests
+                .Single(i => i.QuestId == id && i.UserId == userId);
             thisUserQuest.Status = "Rewarded";
-            return RedirectToAction(nameof(Details));
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Details", new { id = userId });
         }
     }
 }
