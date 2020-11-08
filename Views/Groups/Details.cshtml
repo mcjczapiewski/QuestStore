@@ -131,6 +131,14 @@
         <th>
             Extra
         </th>
+        <th>
+            Status
+        </th>
+        @if (User.IsInRole("Student"))
+        {
+            <th>
+            </th>
+        }
     </tr>
     </thead>
     <tbody>
@@ -149,10 +157,20 @@
             <td>
                 @Html.DisplayFor(modelItem => Model.Rest.Item1.Single(i => i.QuestId == item.QuestId).Extra)
             </td>
-            @if (User.IsInRole("Student"))
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            @if (User.IsInRole("Student") && item.Status == "In progress")
             {
                 <td>
-                    <a asp-action="GiveUp" asp-route-id="@item.QuestId">Give up...</a>
+                    <a asp-action="GiveUp" asp-route-id="@item.QuestId" asp-route-groupId="@Model.Item4.GroupId">Give up...</a> | 
+                    <a asp-action="MarkCompleted" asp-route-id="@item.QuestId" asp-route-groupId="@Model.Item4.GroupId">Mark as completed</a>
+                </td>
+            }
+            else if ((User.IsInRole("Mentor") || User.IsInRole("Admin")) && item.Status == "Completed")
+            {
+                <td>
+                    <a asp-action="Reward" asp-route-id="@item.QuestId" asp-route-groupId="@Model.Item4.GroupId">Reward</a>
                 </td>
             }
         </tr>

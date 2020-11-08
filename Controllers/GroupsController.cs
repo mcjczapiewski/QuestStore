@@ -228,13 +228,37 @@ namespace QuestStore.Controllers
         }
 
         [Authorize(Roles = "Student")]
-        public async Task<IActionResult> GiveUp(int? id)
+        public async Task<IActionResult> GiveUp(int? id, int? groupId)
         {
             var abandonedQuest = _context.GroupsQuests
-                .Single(i => i.QuestId == id);
+                .Single(i => i.QuestId == id && i.GroupId == groupId);
             _context.GroupsQuests.Remove(abandonedQuest);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        [Authorize(Roles = "Student")]
+        public async Task<IActionResult> MarkCompleted(int? id, int? groupId)
+        {
+            var completeQuest = _context.GroupsQuests
+                .Single(i => i.QuestId == id && i.GroupId == groupId);
+            completeQuest.Status = "Completed";
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> Reward(int? id, int? groupId)
+        {
+            var group = _context.Groups
+                .Single(i => i.GroupId == groupId);
+            var questReward = _context.Quests
+                .Single(i => i.QuestId == id).Reward;
+            group.GroupBank += questReward;
+            var thisGroupQuest = _context.GroupsQuests
+                .Single(i => i.QuestId == id && i.GroupId == groupId);
+            thisGroupQuest.Status = "Rewarded";
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Details", new { id = groupId });
         }
     }
 }
