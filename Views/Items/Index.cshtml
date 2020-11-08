@@ -16,10 +16,10 @@
                 @Html.DisplayNameFor(model => model.Name)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Category)
+                @Html.ActionLink("Category", "Index", new { sortOrder = ViewBag.CategorySortParm })
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Extra)
+                @Html.ActionLink("Extra", "Index", new { sortOrder = ViewBag.ExtraSortParm })
             </th>
             <th></th>
         </tr>

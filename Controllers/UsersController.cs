@@ -41,14 +41,14 @@ namespace QuestStore.Controllers
             }
             switch (sortOrder)
             {
-                case "name_desc":
+                case "Name_Desc":
                     horizonp_questcredentialsContext = horizonp_questcredentialsContext.OrderByDescending(h => h.Name);
                     break;
                 case "Title_Desc":
                     horizonp_questcredentialsContext = horizonp_questcredentialsContext.OrderByDescending(h => h.Mentor);
                     break;
                 default:
-                    horizonp_questcredentialsContext = horizonp_questcredentialsContext.OrderBy(h => h.Surname);
+                    horizonp_questcredentialsContext = horizonp_questcredentialsContext.OrderBy(h => h.Mentor);
                     break;
             }
             return View(await horizonp_questcredentialsContext.ToListAsync());
