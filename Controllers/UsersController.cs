@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using QuestStore.Models;
 using QuestStore.ViewModels;
+using System;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 
 namespace QuestStore.Controllers
@@ -23,7 +21,7 @@ namespace QuestStore.Controllers
         {
             _context = context;
         }
-  
+
         // GET: Users
         public async Task<IActionResult> Index(string sortOrder, string searchString)
         {
@@ -39,18 +37,13 @@ namespace QuestStore.Controllers
                                 .Contains(searchString) || (s.Name + " " + s.Surname)
                                 .Contains(searchString));
             }
-            switch (sortOrder)
+
+            horizonp_questcredentialsContext = sortOrder switch
             {
-                case "Name_Desc":
-                    horizonp_questcredentialsContext = horizonp_questcredentialsContext.OrderByDescending(h => h.Name);
-                    break;
-                case "Title_Desc":
-                    horizonp_questcredentialsContext = horizonp_questcredentialsContext.OrderByDescending(h => h.Mentor);
-                    break;
-                default:
-                    horizonp_questcredentialsContext = horizonp_questcredentialsContext.OrderBy(h => h.Mentor);
-                    break;
-            }
+                "Name_Desc" => horizonp_questcredentialsContext.OrderByDescending(h => h.Name),
+                "Title_Desc" => horizonp_questcredentialsContext.OrderByDescending(h => h.Mentor),
+                _ => horizonp_questcredentialsContext.OrderBy(h => h.Mentor)
+            };
             return View(await horizonp_questcredentialsContext.ToListAsync());
         }
 
@@ -79,12 +72,14 @@ namespace QuestStore.Controllers
                 .ToListAsync();
 
             var technologies = await _context.UsersTech.ToListAsync();
-            var userDetailsModel = new UserDetails();
-            userDetailsModel.Users = users;
-            userDetailsModel.UsersTechs = technologies;
-            userDetailsModel.Technologies = _context.Technologies.ToList();
-            userDetailsModel.Quests = quests;
-            userDetailsModel.UsersQuests = userQuests;
+            var userDetailsModel = new UserDetails
+            {
+                Users = users,
+                UsersTechs = technologies,
+                Technologies = _context.Technologies.ToList(),
+                Quests = quests,
+                UsersQuests = userQuests
+            };
 
             return View(userDetailsModel);
         }

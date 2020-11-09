@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Threading.Tasks;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using QuestStore.Models;
 using QuestStore.ViewModels;
+using System.Data;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace QuestStore.Controllers
 {
@@ -73,10 +68,13 @@ namespace QuestStore.Controllers
                 ViewData["Exists"] = true;
                 return View();
             }
-            UsersQuests usersQuests = new UsersQuests();
-            usersQuests.UserId = userId;
-            usersQuests.QuestId = quests.QuestId;
-            usersQuests.Status = "In progress";
+
+            UsersQuests usersQuests = new UsersQuests
+            {
+                UserId = userId,
+                QuestId = quests.QuestId,
+                Status = "In progress"
+            };
             if (ModelState.IsValid)
             {
                 _context.Add(usersQuests);
@@ -111,10 +109,13 @@ namespace QuestStore.Controllers
                 ViewData["Exists"] = true;
                 return View(nameof(SignOn));
             }
-            GroupsQuests groupsQuests = new GroupsQuests();
-            groupsQuests.GroupId = groupId;
-            groupsQuests.QuestId = quests.QuestId;
-            groupsQuests.Status = "In progress";
+
+            GroupsQuests groupsQuests = new GroupsQuests
+            {
+                GroupId = groupId,
+                QuestId = quests.QuestId,
+                Status = "In progress"
+            };
             if (ModelState.IsValid)
             {
                 _context.Add(groupsQuests);
@@ -124,7 +125,7 @@ namespace QuestStore.Controllers
         }
 
         [Authorize(Roles = "Student")]
-        public async Task<IActionResult> GiveUp(int? id, string? name)
+        public async Task<IActionResult> GiveUp(int? id, string name)
         {
             var abandonedQuest = _context.UsersQuests
                 .Single(i => i.QuestId == id && i.UserId == _context.Users.Single(x => x.CredentialsId == _context.AspNetUsers.Single(w => w.UserName == name).Id).UserId);
@@ -134,7 +135,7 @@ namespace QuestStore.Controllers
         }
 
         [Authorize(Roles = "Student")]
-        public async Task<IActionResult> MarkCompleted(int? id, string? name)
+        public async Task<IActionResult> MarkCompleted(int? id, string name)
         {
             var completeQuest = _context.UsersQuests
                 .Single(i => i.QuestId == id && i.UserId == _context.Users.Single(x => x.CredentialsId == _context.AspNetUsers.Single(w => w.UserName == name).Id).UserId);
@@ -169,7 +170,7 @@ namespace QuestStore.Controllers
         }
 
         // POST: Quests/Create
-        
+
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
@@ -248,9 +249,11 @@ namespace QuestStore.Controllers
                 return NotFound();
             }
 
-            UserNameOnQuest userNameOnQuest = new UserNameOnQuest();
-            userNameOnQuest.Quests = await _context.Quests
-                .FirstOrDefaultAsync(m => m.QuestId == id);
+            UserNameOnQuest userNameOnQuest = new UserNameOnQuest
+            {
+                Quests = await _context.Quests
+                    .FirstOrDefaultAsync(m => m.QuestId == id)
+            };
             if (userNameOnQuest.Quests == null)
             {
                 return NotFound();
@@ -267,7 +270,7 @@ namespace QuestStore.Controllers
                 .Where(i => aspUsersOnThatQuest.Contains(i.Id))
                 .Select(i => i.UserName)
                 .ToList();
-            
+
             return View(userNameOnQuest);
         }
 

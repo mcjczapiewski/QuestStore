@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using QuestStore.Models;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace QuestStore.Controllers
 {
@@ -85,7 +83,7 @@ namespace QuestStore.Controllers
             var groupBalance = group.GroupBank;
             var itemInStore = _context.Store
                 .Single(i => i.ItemId == itemToBuy.ItemId);
-            
+
             GroupsInventory groupsInventory = new GroupsInventory();
             UserInventory userInventory = new UserInventory();
 

@@ -1,9 +1,6 @@
-﻿using System;
-using System.IO;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json.Linq;
+using System;
 
 namespace QuestStore.Models
 {
@@ -38,7 +35,7 @@ namespace QuestStore.Models
         public virtual DbSet<UsersQuests> UsersQuests { get; set; }
         public virtual DbSet<UsersTech> UsersTech { get; set; }
         public virtual DbSet<Wallet> Wallet { get; set; }
-        
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -497,7 +494,7 @@ namespace QuestStore.Models
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("user_ID");
             });
-            
+
             modelBuilder.Entity<Users>(entity =>
             {
                 entity.HasKey(e => e.UserId)

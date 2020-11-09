@@ -1,17 +1,10 @@
-﻿using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using QuestStore.Data;
 using QuestStore.Models;
-using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
-using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 
 namespace QuestStore.Controllers
 {
@@ -21,7 +14,7 @@ namespace QuestStore.Controllers
         private readonly horizonp_questcredentialsContext _context;
         private readonly SignInManager<IdentityUser> _signInManager;
 
-        public HomeController(ILogger<HomeController> logger, horizonp_questcredentialsContext context,SignInManager<IdentityUser> signInManager)
+        public HomeController(ILogger<HomeController> logger, horizonp_questcredentialsContext context, SignInManager<IdentityUser> signInManager)
         {
             _logger = logger;
             _context = context;

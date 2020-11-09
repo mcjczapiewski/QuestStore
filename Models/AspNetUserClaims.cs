@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace QuestStore.Models
+﻿namespace QuestStore.Models
 {
     public partial class AspNetUserClaims
     {

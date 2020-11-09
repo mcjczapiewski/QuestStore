@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+using QuestStore.Models;
 using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.EntityFrameworkCore.Metadata.Conventions;
-using QuestStore.Data;
-using QuestStore.Models;
-using Microsoft.AspNetCore.Identity;
 
 namespace QuestStore.Controllers
 {
@@ -31,6 +25,6 @@ namespace QuestStore.Controllers
             base.OnActionExecuted(filterContext);
         }
         public ApplicationBaseController()
-        {}
+        { }
     }
 }

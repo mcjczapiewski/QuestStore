@@ -6,177 +6,184 @@
 
 <h1>@Model.Item4.Name</h1>
 
-@if (User.IsInRole("Student"))
+@if (Model.Item4.GroupId == 1)
 {
-    <div class="row">
-        <div class="col-md-4">
-            <form asp-action="Deposit">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <div class="form-group">
-                    <label>Current Group Bank balance: @Model.Item4.GroupBank</label>
-                    <label for="AddMoney">Input how much you want to deposit</label>
-                    <input type="number" id="AddMoney" name="AddMoney" min="1" step="any" />
-                    <span asp-validation-for="Item4.GroupBank" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <input type="hidden" name="GroupId" value="@Model.Item4.GroupId"/>
-                    <input type="submit" value="Deposit" class="btn btn-primary"/>
-                </div>
-            </form>
-        </div>
-    </div>
+    <h1>You are not in group.</h1>
 }
-
-<h3>Group members</h3>
-
-<table class="table">
-    <thead>
-    <tr>
-        <th>
-            Name
-        </th>
-        <th>
-            Surname
-        </th>
-        <th>
-            Gender
-        </th>
-        <th>
-            Technologies
-        </th>
-    </tr>
-    </thead>
-    <tbody>
-    @foreach (Users item in Model.Item1)
+else
+{
+    @if (User.IsInRole("Student"))
     {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Surname)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Gender)
-            </td>
-            <td>
-                @String.Join(", ",
-                    Model.Item3.Where(
-                        i => Model.Item2.Where(
-                            x => x.UserId == item.UserId)
-                            .Select(x => x.TechId)
-                            .ToList()
-                            .Contains(i.TechId))
-                        .Select(i => i.Name))
-            </td>
-        </tr>
+        <div class="row">
+            <div class="col-md-4">
+                <form asp-action="Deposit">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group">
+                        <label>Current Group Bank balance: @Model.Item4.GroupBank</label>
+                        <label for="AddMoney">Input how much you want to deposit</label>
+                        <input type="number" id="AddMoney" name="AddMoney" min="1" step="any" />
+                        <span asp-validation-for="Item4.GroupBank" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="hidden" name="GroupId" value="@Model.Item4.GroupId"/>
+                        <input type="submit" value="Deposit" class="btn btn-primary"/>
+                    </div>
+                </form>
+            </div>
+        </div>
     }
-    </tbody>
-</table>
 
-<h3>Group inventory</h3>
+    <h3>Group members</h3>
 
-<table class="table">
-    <thead>
-    <tr>
-        <th>
-            Name
-        </th>
-        <th>
-            Category
-        </th>
-        <th>
-            ItemUsed
-        </th>
-    </tr>
-    </thead>
-    <tbody>
-    @foreach (GroupsInventory item in Model.Item5)
-    {
+    <table class="table">
+        <thead>
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => Model.Item6.Single(i => i.ItemId == item.ItemId).Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => Model.Item6.Single(i => i.ItemId == item.ItemId).Category)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ItemUsed)
-            </td>
-            @if (!item.ItemUsed)
-            {
-                <td>
-                    <a asp-action="UseItem" asp-route-id="@item.InventoryId">Use</a>
-                </td>
-            }
-        </tr>
-    }
-    </tbody>
-</table>
-
-<h3>Group quests</h3>
-
-<table class="table">
-    <thead>
-    <tr>
-        <th>
-            Title
-        </th>
-        <th>
-            Reward
-        </th>
-        <th>
-            Description
-        </th>
-        <th>
-            Extra
-        </th>
-        <th>
-            Status
-        </th>
-        @if (User.IsInRole("Student"))
-        {
             <th>
+                Name
             </th>
+            <th>
+                Surname
+            </th>
+            <th>
+                Gender
+            </th>
+            <th>
+                Technologies
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (Users item in Model.Item1)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Surname)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Gender)
+                </td>
+                <td>
+                    @String.Join(", ",
+                        Model.Item3.Where(
+                            i => Model.Item2.Where(
+                                x => x.UserId == item.UserId)
+                                .Select(x => x.TechId)
+                                .ToList()
+                                .Contains(i.TechId))
+                            .Select(i => i.Name))
+                </td>
+            </tr>
         }
-    </tr>
-    </thead>
-    <tbody>
-    @foreach (GroupsQuests item in Model.Item7)
-    {
+        </tbody>
+    </table>
+
+    <h3>Group inventory</h3>
+
+    <table class="table">
+        <thead>
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => Model.Rest.Item1.Single(i => i.QuestId == item.QuestId).Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => Model.Rest.Item1.Single(i => i.QuestId == item.QuestId).Reward)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => Model.Rest.Item1.Single(i => i.QuestId == item.QuestId).Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => Model.Rest.Item1.Single(i => i.QuestId == item.QuestId).Extra)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
-            @if (User.IsInRole("Student") && item.Status == "In progress")
-            {
+            <th>
+                Name
+            </th>
+            <th>
+                Category
+            </th>
+            <th>
+                ItemUsed
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (GroupsInventory item in Model.Item5)
+        {
+            <tr>
                 <td>
-                    <a asp-action="GiveUp" asp-route-id="@item.QuestId" asp-route-groupId="@Model.Item4.GroupId">Give up...</a> | 
-                    <a asp-action="MarkCompleted" asp-route-id="@item.QuestId" asp-route-groupId="@Model.Item4.GroupId">Mark as completed</a>
+                    @Html.DisplayFor(modelItem => Model.Item6.Single(i => i.ItemId == item.ItemId).Name)
                 </td>
-            }
-            else if ((User.IsInRole("Mentor") || User.IsInRole("Admin")) && item.Status == "Completed")
-            {
                 <td>
-                    <a asp-action="Reward" asp-route-id="@item.QuestId" asp-route-groupId="@Model.Item4.GroupId">Reward</a>
+                    @Html.DisplayFor(modelItem => Model.Item6.Single(i => i.ItemId == item.ItemId).Category)
                 </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ItemUsed)
+                </td>
+                @if (!item.ItemUsed)
+                {
+                    <td>
+                        <a asp-action="UseItem" asp-route-id="@item.InventoryId">Use</a>
+                    </td>
+                }
+            </tr>
+        }
+        </tbody>
+    </table>
+
+    <h3>Group quests</h3>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>
+                Title
+            </th>
+            <th>
+                Reward
+            </th>
+            <th>
+                Description
+            </th>
+            <th>
+                Extra
+            </th>
+            <th>
+                Status
+            </th>
+            @if (User.IsInRole("Student"))
+            {
+                <th>
+                </th>
             }
         </tr>
-    }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+        @foreach (GroupsQuests item in Model.Item7)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => Model.Rest.Item1.Single(i => i.QuestId == item.QuestId).Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => Model.Rest.Item1.Single(i => i.QuestId == item.QuestId).Reward)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => Model.Rest.Item1.Single(i => i.QuestId == item.QuestId).Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => Model.Rest.Item1.Single(i => i.QuestId == item.QuestId).Extra)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Status)
+                </td>
+                @if (User.IsInRole("Student") && item.Status == "In progress")
+                {
+                    <td>
+                        <a asp-action="GiveUp" asp-route-id="@item.QuestId" asp-route-groupId="@Model.Item4.GroupId">Give up...</a> | 
+                        <a asp-action="MarkCompleted" asp-route-id="@item.QuestId" asp-route-groupId="@Model.Item4.GroupId">Mark as completed</a>
+                    </td>
+                }
+                else if ((User.IsInRole("Mentor") || User.IsInRole("Admin")) && item.Status == "Completed")
+                {
+                    <td>
+                        <a asp-action="Reward" asp-route-id="@item.QuestId" asp-route-groupId="@Model.Item4.GroupId">Reward</a>
+                    </td>
+                }
+            </tr>
+        }
+        </tbody>
+    </table>
+}
 @if (!User.IsInRole("Student"))
 {
     <div>
