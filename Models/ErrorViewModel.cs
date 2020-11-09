@@ -1,5 +1,3 @@
-using System;
-
 namespace QuestStore.Models
 {
     public class ErrorViewModel

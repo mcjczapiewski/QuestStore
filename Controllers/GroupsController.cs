@@ -1,14 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using QuestStore.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace QuestStore.Controllers
 {
+    [Authorize]
     public class GroupsController : ApplicationBaseController
     {
         private readonly horizonp_questcredentialsContext _context;
@@ -21,6 +23,16 @@ namespace QuestStore.Controllers
         // GET: Groups
         public async Task<IActionResult> Index()
         {
+            if (User.IsInRole("Student"))
+            {
+                return RedirectToAction("Details",
+                    new
+                    {
+                        id = _context.Users
+                            .Single(i => i.CredentialsId == User.FindFirstValue(ClaimTypes.NameIdentifier)).GroupId
+                    });
+            }
+
             return View(await _context.Groups.ToListAsync());
         }
 
@@ -32,17 +44,36 @@ namespace QuestStore.Controllers
                 return NotFound();
             }
 
-            var groups = await _context.Groups
-                .FirstOrDefaultAsync(m => m.GroupId == id);
-            if (groups == null)
-            {
-                return NotFound();
-            }
+            var groupMembers = await _context.Users
+                .Where(i => i.GroupId == id)
+                .ToListAsync();
+            var technologies = await _context.UsersTech.ToListAsync();
+            var group = await _context.Groups
+                .SingleAsync(i => i.GroupId == id);
+            var groupInventory = await _context.GroupsInventory
+                .Where(i => i.GroupId == id)
+                .ToListAsync();
+            var itemsInGroupInventory = await _context.Items
+                .Where(i => groupInventory.Select(x => x.ItemId).ToList().Contains(i.ItemId))
+                .ToListAsync();
+            var groupQuests = await _context.GroupsQuests
+                .Where(i => i.GroupId == id)
+                .ToListAsync();
+            var questsGroupIsAt = await _context.Quests
+                .Where(i => groupQuests.Select(x => x.QuestId).ToList().Contains(i.QuestId))
+                .ToListAsync();
+            var secondTuple = new Tuple<List<Quests>>(questsGroupIsAt);
+            var tupleModel =
+                new Tuple<List<Users>, List<UsersTech>, List<Technologies>, Groups, List<GroupsInventory>, List<Items>,
+                    List<GroupsQuests>, Tuple<List<Quests>>>
+                (groupMembers, technologies, _context.Technologies.ToList(), group, groupInventory,
+                itemsInGroupInventory, groupQuests, secondTuple);
 
-            return View(groups);
+            return View(tupleModel);
         }
 
         // GET: Groups/Create
+        [Authorize(Roles = "Admin, Mentor")]
         public IActionResult Create()
         {
             return View();
@@ -53,6 +84,7 @@ namespace QuestStore.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, Mentor")]
         public async Task<IActionResult> Create([Bind("GroupId,Name,NumberOfPpl")] Groups groups)
         {
             if (ModelState.IsValid)
@@ -61,10 +93,12 @@ namespace QuestStore.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
             return View(groups);
         }
 
         // GET: Groups/Edit/5
+        [Authorize(Roles = "Admin, Mentor")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -77,6 +111,7 @@ namespace QuestStore.Controllers
             {
                 return NotFound();
             }
+
             return View(groups);
         }
 
@@ -85,6 +120,7 @@ namespace QuestStore.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, Mentor")]
         public async Task<IActionResult> Edit(int id, [Bind("GroupId,Name,NumberOfPpl")] Groups groups)
         {
             if (id != groups.GroupId)
@@ -110,12 +146,15 @@ namespace QuestStore.Controllers
                         throw;
                     }
                 }
+
                 return RedirectToAction(nameof(Index));
             }
+
             return View(groups);
         }
 
         // GET: Groups/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -136,6 +175,7 @@ namespace QuestStore.Controllers
         // POST: Groups/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var groups = await _context.Groups.FindAsync(id);
@@ -147,6 +187,75 @@ namespace QuestStore.Controllers
         private bool GroupsExists(int id)
         {
             return _context.Groups.Any(e => e.GroupId == id);
+        }
+
+        public async Task<IActionResult> Deposit(int GroupId, decimal AddMoney)
+        {
+            try
+            {
+                var userWallet = _context.Wallet
+                    .Single(i => i.UserId == _context.Users.Single(i => i.CredentialsId == User.FindFirstValue(ClaimTypes.NameIdentifier)).UserId);
+                var groupUpdate = _context.Groups
+                    .Single(i => i.GroupId == GroupId);
+                userWallet.Balance -= AddMoney;
+                groupUpdate.GroupBank += AddMoney;
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!GroupsExists(GroupId))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> UseItem(int? id)
+        {
+            var item = _context.GroupsInventory
+                .Single(i => i.InventoryId == id);
+            item.ItemUsed = true;
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index");
+        }
+
+        [Authorize(Roles = "Student")]
+        public async Task<IActionResult> GiveUp(int? id, int? groupId)
+        {
+            var abandonedQuest = _context.GroupsQuests
+                .Single(i => i.QuestId == id && i.GroupId == groupId);
+            _context.GroupsQuests.Remove(abandonedQuest);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        [Authorize(Roles = "Student")]
+        public async Task<IActionResult> MarkCompleted(int? id, int? groupId)
+        {
+            var completeQuest = _context.GroupsQuests
+                .Single(i => i.QuestId == id && i.GroupId == groupId);
+            completeQuest.Status = "Completed";
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> Reward(int? id, int? groupId)
+        {
+            var group = _context.Groups
+                .Single(i => i.GroupId == groupId);
+            var questReward = _context.Quests
+                .Single(i => i.QuestId == id).Reward;
+            group.GroupBank += questReward;
+            var thisGroupQuest = _context.GroupsQuests
+                .Single(i => i.QuestId == id && i.GroupId == groupId);
+            thisGroupQuest.Status = "Rewarded";
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Details", new { id = groupId });
         }
     }
 }

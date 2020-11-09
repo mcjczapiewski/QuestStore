@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace QuestStore.Models
 {
@@ -13,7 +12,7 @@ namespace QuestStore.Models
         public int ItemId { get; set; }
         public string Name { get; set; }
         public string Category { get; set; }
-        public string Extra { get; set; }
+        public bool Extra { get; set; }
 
         public virtual Store Store { get; set; }
         public virtual ICollection<UserInventory> UserInventory { get; set; }

@@ -1,6 +1,7 @@
 ﻿@model IEnumerable<QuestStore.Models.Quests>
 @{
     var showButtons = (bool)ViewData["ShowButtons"];
+    List<UsersQuests> userQuests = (List<UsersQuests>)ViewData["userQuests"];
 }
 
 <table class="table">
@@ -18,6 +19,12 @@
         <th>
             @Html.DisplayNameFor(model => model.Extra)
         </th>
+        @if (ViewBag.Title == "My Quests")
+        {
+            <th>
+                @Html.DisplayName("Status")
+            </th>
+        }
         @if (showButtons)
         {
             <th></th>
@@ -42,22 +49,30 @@
             @if (ViewBag.Title == "My Quests")
             {
                 <td>
-                    <a asp-action="GiveUp" asp-route-id="@item.QuestId">Give up...</a>
+                    @Html.DisplayFor(modelItem => userQuests.Single(i => i.QuestId == item.QuestId).Status)
                 </td>
+                @if (userQuests.Single(i => i.QuestId == item.QuestId).Status == "In progress")
+                {
+                    <td>
+                        <a asp-action="GiveUp" asp-route-id="@item.QuestId" asp-route-name="@User.Identity.Name">Give up...</a> | 
+                        <a asp-action="MarkCompleted" asp-route-id="@item.QuestId" asp-route-name="@User.Identity.Name">Mark as completed</a>
+                    </td>
+                }
             }
             @if (showButtons)
             {
                 <td>
-                    @if (User.IsInRole("Student") || User.IsInRole("Admin"))
+                    @if (User.IsInRole("Student") || User.IsInRole("Admin") || User.IsInRole("Mentor"))
                     {
                         <a asp-action="Details" asp-route-id="@item.QuestId">Details</a>
                     }
                     @if (User.IsInRole("Student"))
                     {
                         @: | 
-                        <a asp-action="SignOn" asp-route-id="@item.QuestId">Sign On</a>
+                        <a asp-action="SignOn" asp-route-id="@item.QuestId">Sign On | </a>
+                        <a asp-action="GroupSignOn" asp-route-id="@item.QuestId">Group Sign On</a>
                     }
-                    @if (User.IsInRole("Admin"))
+                    @if (User.IsInRole("Admin") || User.IsInRole("Mentor"))
                     {
                         @: | 
                         <a asp-action="Edit" asp-route-id="@item.QuestId">Edit</a>@: |

@@ -1,9 +1,6 @@
-﻿using System;
-using System.IO;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json.Linq;
+using System;
 
 namespace QuestStore.Models
 {
@@ -28,6 +25,7 @@ namespace QuestStore.Models
         public virtual DbSet<EfmigrationsHistory> EfmigrationsHistory { get; set; }
         public virtual DbSet<Groups> Groups { get; set; }
         public virtual DbSet<GroupsQuests> GroupsQuests { get; set; }
+        public virtual DbSet<GroupsInventory> GroupsInventory { get; set; }
         public virtual DbSet<Items> Items { get; set; }
         public virtual DbSet<Quests> Quests { get; set; }
         public virtual DbSet<Store> Store { get; set; }
@@ -37,7 +35,7 @@ namespace QuestStore.Models
         public virtual DbSet<UsersQuests> UsersQuests { get; set; }
         public virtual DbSet<UsersTech> UsersTech { get; set; }
         public virtual DbSet<Wallet> Wallet { get; set; }
-        
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -312,6 +310,8 @@ namespace QuestStore.Models
 
                 entity.Property(e => e.GroupId).HasColumnType("int(11)");
 
+                entity.Property(e => e.GroupBank).HasColumnType("decimal(10,2)");
+
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasColumnType("varchar(50)")
@@ -376,12 +376,12 @@ namespace QuestStore.Models
 
                 entity.Property(e => e.Extra)
                     .IsRequired()
-                    .HasColumnType("enum('Y','N')")
+                    .HasColumnType("tinyint(1)")
                     .HasCharSet("utf8")
                     .HasCollation("utf8_general_ci");
 
                 entity.Property(e => e.Name)
-                    .HasColumnType("varchar(50)")
+                    .HasColumnType("varchar(150)")
                     .HasCharSet("utf8")
                     .HasCollation("utf8_general_ci");
             });
@@ -404,7 +404,7 @@ namespace QuestStore.Models
 
                 entity.Property(e => e.Extra)
                     .IsRequired()
-                    .HasColumnType("enum('Y','N')")
+                    .HasColumnType("tinyint(1)")
                     .HasCharSet("utf8")
                     .HasCollation("utf8_general_ci");
 
@@ -476,6 +476,12 @@ namespace QuestStore.Models
 
                 entity.Property(e => e.UserId).HasColumnType("int(11)");
 
+                entity.Property(e => e.ItemUsed)
+                    .IsRequired()
+                    .HasColumnType("tinyint(1)")
+                    .HasCharSet("utf8")
+                    .HasCollation("utf8_general_ci");
+
                 entity.HasOne(d => d.Item)
                     .WithMany(p => p.UserInventory)
                     .HasForeignKey(d => d.ItemId)
@@ -523,10 +529,18 @@ namespace QuestStore.Models
                     .HasColumnType("int(8)")
                     .HasDefaultValueSql("'1'");
 
+                entity.Property(e => e.Name)
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                entity.Property(e => e.Surname)
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("longtext CHARACTER SET utf8mb4");
+
                 entity.Property(e => e.Mentor)
                     .IsRequired()
-                    .HasColumnType("enum('Y','N')")
-                    .HasDefaultValueSql("'N'")
+                    .HasColumnType("tinyint(1)")
+                    .HasDefaultValueSql("0")
                     .HasCharSet("utf8")
                     .HasCollation("utf8_general_ci");
 
@@ -612,7 +626,7 @@ namespace QuestStore.Models
 
                 entity.Property(e => e.WalletId).HasColumnType("int(10)");
 
-                entity.Property(e => e.Balance).HasColumnType("double(10,2)");
+                entity.Property(e => e.Balance).HasColumnType("decimal(10,2)");
 
                 entity.Property(e => e.UserId).HasColumnType("int(10)");
 

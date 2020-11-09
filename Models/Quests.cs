@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace QuestStore.Models
@@ -17,7 +16,7 @@ namespace QuestStore.Models
         public int Reward { get; set; }
         public string Description { get; set; }
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public string Extra { get; set; }
+        public bool Extra { get; set; }
 
         public virtual ICollection<GroupsQuests> GroupsQuests { get; set; }
         public virtual ICollection<UsersQuests> UsersQuests { get; set; }

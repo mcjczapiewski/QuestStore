@@ -1,7 +1,8 @@
-﻿@model QuestStore.Models.Users
+﻿@model QuestStore.ViewModels.UserDetails
 
 @{
     ViewData["Title"] = "Details";
+    ViewData["ShowButtons"] = false;
 }
 
 <h1>Details</h1>
@@ -11,32 +12,97 @@
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Gender)
+            @Html.DisplayNameFor(model => model.Users.Name)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Gender)
+            @Html.DisplayFor(model => model.Users.Name)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Age)
+            @Html.DisplayNameFor(model => model.Users.Surname)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Age)
+            @Html.DisplayFor(model => model.Users.Surname)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Mentor)
+            @Html.DisplayNameFor(model => model.Users.Gender)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Mentor)
+            @Html.DisplayFor(model => model.Users.Gender)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Group)
+            @Html.DisplayNameFor(model => model.Users.Age)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Group.Name)
+            @Html.DisplayFor(model => model.Users.Age)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Users.Mentor)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Users.Mentor)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Users.Group)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Users.Group.Name)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayName("Technologies")
+        </dt>
+        <dd class = "col-sm-10">
+            @String.Join(", ",
+                Model.Technologies.Where(
+                    i => Model.UsersTechs.Where(
+                        x => x.UserId == Model.Users.UserId)
+                        .Select(x => x.TechId)
+                        .ToList()
+                        .Contains(i.TechId))
+                    .Select(i => i.Name))
         </dd>
     </dl>
 </div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayName("Title")
+            </th>
+            <th>
+                @Html.DisplayName("Reward")
+            </th>
+            <th>
+                @Html.DisplayName("Status")
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Quests)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Reward)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => Model.UsersQuests.Single(i => i.QuestId == item.QuestId).Status)
+                </td>
+                @if (Model.UsersQuests.Single(i => i.QuestId == item.QuestId).Status == "Completed")
+                {
+                    <td>
+                        <a asp-action="Reward" asp-route-id="@item.QuestId" asp-route-userId ="@Model.Users.UserId">Reward</a>
+                    </td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.UserId">Edit</a> |
+    <a asp-action="Edit" asp-route-id="@Model.Users.UserId">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>

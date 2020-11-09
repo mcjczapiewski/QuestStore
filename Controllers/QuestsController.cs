@@ -1,20 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Threading.Tasks;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using QuestStore.Models;
 using QuestStore.ViewModels;
+using System.Data;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace QuestStore.Controllers
 {
+    [Authorize]
     public class QuestsController : ApplicationBaseController
     {
         private readonly horizonp_questcredentialsContext _context;
@@ -31,6 +27,7 @@ namespace QuestStore.Controllers
         }
 
         // GET: Quests/MyQuests
+        [Authorize(Roles = "Student")]
         public async Task<IActionResult> MyQuests()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -39,9 +36,14 @@ namespace QuestStore.Controllers
                 .SelectMany(q => q.UsersQuests)
                 .Select(qs => qs.Quest)
                 .ToListAsync();
+            var questsStatus = await _context.UsersQuests
+                .Where(i => i.UserId == _context.Users.First(x => x.CredentialsId == userId).UserId)
+                .ToListAsync();
+            ViewData["userQuests"] = questsStatus;
             return View(quests);
         }
 
+        [Authorize(Roles = "Student")]
         public async Task<IActionResult> SignOn(int? id)
         {
             if (id == null)
@@ -66,10 +68,13 @@ namespace QuestStore.Controllers
                 ViewData["Exists"] = true;
                 return View();
             }
-            UsersQuests usersQuests = new UsersQuests();
-            usersQuests.UserId = userId;
-            usersQuests.QuestId = quests.QuestId;
-            usersQuests.Status = "In progress";
+
+            UsersQuests usersQuests = new UsersQuests
+            {
+                UserId = userId,
+                QuestId = quests.QuestId,
+                Status = "In progress"
+            };
             if (ModelState.IsValid)
             {
                 _context.Add(usersQuests);
@@ -78,11 +83,63 @@ namespace QuestStore.Controllers
             return View();
         }
 
-        public async Task<IActionResult> GiveUp(int? id)
+        [Authorize(Roles = "Student")]
+        public async Task<IActionResult> GroupSignOn(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var quests = await _context.Quests
+                .FirstOrDefaultAsync(m => m.QuestId == id);
+            if (quests == null)
+            {
+                return NotFound();
+            }
+
+            var groupId = _context.Groups
+                .Where(i => i.GroupId == _context.Users
+                    .Single(x => x.CredentialsId == User.FindFirstValue(ClaimTypes.NameIdentifier)).GroupId)
+                .Select(uid => uid.GroupId)
+                .Single();
+            ViewData["QuestTitle"] = quests.Title;
+            if (_context.GroupsQuests.Any(o => o.QuestId == quests.QuestId && o.GroupId == groupId))
+            {
+                ViewData["Exists"] = true;
+                return View(nameof(SignOn));
+            }
+
+            GroupsQuests groupsQuests = new GroupsQuests
+            {
+                GroupId = groupId,
+                QuestId = quests.QuestId,
+                Status = "In progress"
+            };
+            if (ModelState.IsValid)
+            {
+                _context.Add(groupsQuests);
+                await _context.SaveChangesAsync();
+            }
+            return View(nameof(SignOn));
+        }
+
+        [Authorize(Roles = "Student")]
+        public async Task<IActionResult> GiveUp(int? id, string name)
         {
             var abandonedQuest = _context.UsersQuests
-                .Single(i => i.QuestId == id);
+                .Single(i => i.QuestId == id && i.UserId == _context.Users.Single(x => x.CredentialsId == _context.AspNetUsers.Single(w => w.UserName == name).Id).UserId);
             _context.UsersQuests.Remove(abandonedQuest);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(MyQuests));
+        }
+
+        [Authorize(Roles = "Student")]
+        public async Task<IActionResult> MarkCompleted(int? id, string name)
+        {
+            var completeQuest = _context.UsersQuests
+                .Single(i => i.QuestId == id && i.UserId == _context.Users.Single(x => x.CredentialsId == _context.AspNetUsers.Single(w => w.UserName == name).Id).UserId);
+            completeQuest.Status = "Completed";
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(MyQuests));
         }
@@ -106,18 +163,19 @@ namespace QuestStore.Controllers
         }
 
         // GET: Quests/Create
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Mentor")]
         public IActionResult Create()
         {
             return View();
         }
 
         // POST: Quests/Create
-        [Authorize(Roles = "Admin")]
+
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, Mentor")]
         public async Task<IActionResult> Create([Bind("QuestId,Title,Reward,Description,Extra")] Quests quests)
         {
             if (ModelState.IsValid)
@@ -130,7 +188,7 @@ namespace QuestStore.Controllers
         }
 
         // GET: Quests/Edit/5
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Mentor")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -151,7 +209,7 @@ namespace QuestStore.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Mentor")]
         public async Task<IActionResult> Edit(int id, [Bind("QuestId,Title,Reward,Description,Extra")] Quests quests)
         {
             if (id != quests.QuestId)
@@ -183,7 +241,7 @@ namespace QuestStore.Controllers
         }
 
         // GET: Quests/Delete/5
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Mentor")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -191,9 +249,11 @@ namespace QuestStore.Controllers
                 return NotFound();
             }
 
-            UserNameOnQuest userNameOnQuest = new UserNameOnQuest();
-            userNameOnQuest.Quests = await _context.Quests
-                .FirstOrDefaultAsync(m => m.QuestId == id);
+            UserNameOnQuest userNameOnQuest = new UserNameOnQuest
+            {
+                Quests = await _context.Quests
+                    .FirstOrDefaultAsync(m => m.QuestId == id)
+            };
             if (userNameOnQuest.Quests == null)
             {
                 return NotFound();
@@ -210,14 +270,14 @@ namespace QuestStore.Controllers
                 .Where(i => aspUsersOnThatQuest.Contains(i.Id))
                 .Select(i => i.UserName)
                 .ToList();
-            
+
             return View(userNameOnQuest);
         }
 
         // POST: Quests/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Mentor")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var quests = await _context.Quests.FindAsync(id);

@@ -9,11 +9,24 @@
 
 <h1>Index</h1>
 
+<form asp-controller="Users" asp-action="Index">
+    <p>
+        User: <input type="text" name="SearchString" />
+        <input type="submit" value="Search" />
+    </p>
+</form>
+
 <table class="table">
     <thead>
         <tr>
             <th>
-                Name
+                Login
+            </th>
+            <th>
+                @Html.ActionLink("Name", "Index", new { sortOrder = ViewBag.NameSortParm })
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Surname)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Gender)
@@ -22,7 +35,7 @@
                 @Html.DisplayNameFor(model => model.Age)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Mentor)
+                @Html.ActionLink("Mentor", "Index", new { sortOrder = ViewBag.MentorSortParm })
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Group)
@@ -32,9 +45,19 @@
     </thead>
     <tbody>
 @foreach (var item in Model) {
+    if (UserManager.Users.Single(u => u.Id == item.CredentialsId).UserName == "admin")
+    {
+        continue;
+    }
         <tr>
             <td>
                 @UserManager.Users.Single(u => u.Id == item.CredentialsId).UserName
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Surname)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Gender)
@@ -49,9 +72,14 @@
                 @Html.DisplayFor(modelItem => item.Group.Name)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.UserId">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.UserId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.UserId">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.UserId">Edit</a>
+                @if (User.IsInRole("Admin"))
+                {
+                    <span>|</span>                   
+                    <a asp-action="Delete" asp-route-id="@item.UserId">Delete</a>
+                }
+                
             </td>
         </tr>
 }

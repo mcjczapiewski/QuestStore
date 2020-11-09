@@ -1,16 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using QuestStore.Models;
+using QuestStore.ViewModels;
+using System;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
+
 
 namespace QuestStore.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin, Mentor")]
     public class UsersController : ApplicationBaseController
     {
         private readonly horizonp_questcredentialsContext _context;
@@ -21,9 +23,27 @@ namespace QuestStore.Controllers
         }
 
         // GET: Users
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrder, string searchString)
         {
-            var horizonp_questcredentialsContext = _context.Users.Include(u => u.Group);
+            ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "Name_Desc" : "";
+            ViewBag.MentorSortParm = String.IsNullOrEmpty(sortOrder) ? "Title_Desc" : "";
+
+            var horizonp_questcredentialsContext = from h in _context.Users.Include(u => u.Group)
+                                                   select h;
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                horizonp_questcredentialsContext = horizonp_questcredentialsContext
+                                .Where(s => s.Surname.Contains(searchString) || s.Name
+                                .Contains(searchString) || (s.Name + " " + s.Surname)
+                                .Contains(searchString));
+            }
+
+            horizonp_questcredentialsContext = sortOrder switch
+            {
+                "Name_Desc" => horizonp_questcredentialsContext.OrderByDescending(h => h.Name),
+                "Title_Desc" => horizonp_questcredentialsContext.OrderByDescending(h => h.Mentor),
+                _ => horizonp_questcredentialsContext.OrderBy(h => h.Mentor)
+            };
             return View(await horizonp_questcredentialsContext.ToListAsync());
         }
 
@@ -42,8 +62,26 @@ namespace QuestStore.Controllers
             {
                 return NotFound();
             }
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userQuests = _context.UsersQuests
+                .Where(i => i.UserId == users.UserId)
+                .ToList();
+            var quests = await _context.Quests
+                .Where(i => userQuests
+                    .Select(i => i.QuestId).Contains(i.QuestId))
+                .ToListAsync();
 
-            return View(users);
+            var technologies = await _context.UsersTech.ToListAsync();
+            var userDetailsModel = new UserDetails
+            {
+                Users = users,
+                UsersTechs = technologies,
+                Technologies = _context.Technologies.ToList(),
+                Quests = quests,
+                UsersQuests = userQuests
+            };
+
+            return View(userDetailsModel);
         }
 
         // GET: Users/Edit/5
@@ -68,7 +106,7 @@ namespace QuestStore.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("UserId,Gender,Age,Mentor,GroupId")] Users users)
+        public async Task<IActionResult> Edit(int id, [Bind("UserId,Gender,Age,Mentor,GroupId,Name,Surname")] Users users)
         {
             if (id != users.UserId)
             {
@@ -80,10 +118,15 @@ namespace QuestStore.Controllers
                 try
                 {
                     var updateUser = _context.Users.Single(u => u.UserId == id);
-                    updateUser.Gender = users.Gender;
-                    updateUser.Mentor = users.Mentor;
+                    if (User.IsInRole("Admin"))
+                    {
+                        updateUser.Name = users.Name;
+                        updateUser.Surname = users.Surname;
+                        updateUser.Gender = users.Gender;
+                        updateUser.Mentor = users.Mentor;
+                        updateUser.Age = users.Age;
+                    };
                     updateUser.GroupId = users.GroupId;
-                    updateUser.Age = users.Age;
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -104,6 +147,7 @@ namespace QuestStore.Controllers
         }
 
         // GET: Users/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -125,6 +169,7 @@ namespace QuestStore.Controllers
         // POST: Users/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var users = await _context.Users.FindAsync(id);
@@ -136,6 +181,20 @@ namespace QuestStore.Controllers
         private bool UsersExists(int id)
         {
             return _context.Users.Any(e => e.UserId == id);
+        }
+
+        public async Task<IActionResult> Reward(int? id, int? userId)
+        {
+            var userWallet = _context.Wallet
+                .Single(i => i.UserId == userId);
+            var questReward = _context.Quests
+                .Single(i => i.QuestId == id).Reward;
+            userWallet.Balance += questReward;
+            var thisUserQuest = _context.UsersQuests
+                .Single(i => i.QuestId == id && i.UserId == userId);
+            thisUserQuest.Status = "Rewarded";
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Details", new { id = userId });
         }
     }
 }

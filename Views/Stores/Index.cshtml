@@ -4,14 +4,24 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
-
-@if (User.IsInRole("Admin"))
+@if (TempData["YouArePoor"] is true)
 {
-    <p>
-        <a asp-action="Create">Create New</a>
-    </p>
+    <h1 style="color: red" align="center">Not enough money!</h1>
 }
+else if (TempData["ItemInInventory"] is true)
+{
+    <h3 style="color: blue" align="center">Item already in inventory ;-)</h3>
+}
+else if (TempData["ItemAdded"] is true)
+{
+    <h3 style="color: blue" align="center">Item added to inventory.</h3>
+}
+@if (User.IsInRole("Student"))
+{
+    <h2>ACHTUNG! Basic items are meant for students. Magic items are for groups!</h2>
+    <h4>If you buy a magic item, it goes to Group Inventory and for Group Bank money.<br/>We suggest discussing it with your group beforehand.</h4>
+}
+
 <table class="table">
     <thead>
         <tr>
@@ -25,40 +35,40 @@
                 @Html.DisplayNameFor(model => model.Price)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Item.Extra)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.Item.Category)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NumberAvailable)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Price)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Item.Extra)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Item.Category)
-            </td>
-            <td>
-                @if (User.IsInRole("Admin"))
-                {
-                    <a asp-action="Edit" asp-route-id="@item.StoreItemId">Edit</a>@: |
-                    <a asp-action="Delete" asp-route-id="@item.StoreItemId">Delete</a>
-                }
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NumberAvailable)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Item.Category)
+                </td>
+                <td>
+                    @if (User.IsInRole("Admin") || User.IsInRole("Mentor"))
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.StoreItemId">Edit</a>
+                    }
+                </td>
+                <td>
+                    @if (User.IsInRole("Student") && item.NumberAvailable > 0)
+                    {
+                        <a asp-action="BuyItem" asp-route-id="@item.ItemId">Buy</a>
+                    }
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

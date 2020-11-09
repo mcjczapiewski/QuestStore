@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace QuestStore.Models
@@ -16,6 +15,8 @@ namespace QuestStore.Models
         public string Name { get; set; }
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public int NumberOfPpl { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public decimal? GroupBank { get; set; }
 
         public virtual ICollection<GroupsQuests> GroupsQuests { get; set; }
         public virtual ICollection<Users> Users { get; set; }
